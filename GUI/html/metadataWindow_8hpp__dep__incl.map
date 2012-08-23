@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$playerWindow_8hpp.html" title="player window specifications" alt="" coords="61,80,189,107"/>
+<area shape="rect" id="node5" href="$main_8cpp.html" title="EBU Player main file." alt="" coords="5,155,79,181"/>
+<area shape="rect" id="node7" href="$playerWindow_8cpp.html" title="player window" alt="" coords="143,155,272,181"/>
+<area shape="rect" id="node10" href="$metadataWindow_8cpp.html" title="EBUCore Metadata window." alt="" coords="266,80,413,107"/>
+</map>

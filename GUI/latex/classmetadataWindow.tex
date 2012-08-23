@@ -1,0 +1,711 @@
+\hypertarget{classmetadataWindow}{\section{metadata\-Window Class Reference}
+\label{classmetadataWindow}\index{metadata\-Window@{metadata\-Window}}
+}
+
+
+this class represent the player window  
+
+
+
+
+{\ttfamily \#include $<$metadata\-Window.\-hpp$>$}
+
+
+
+Collaboration diagram for metadata\-Window\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classmetadataWindow__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmetadataWindow_a85cef3fe02d23d3ef7d4b8ab79860075}{metadata\-Window} (Base\-Object\-Type $\ast$cobject, const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&ref\-Glade)
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+virtual \hyperlink{classmetadataWindow_a7170d48cd47c54261398987daeb55118}{$\sim$metadata\-Window} ()
+\begin{DoxyCompactList}\small\item\em Class destructor. \end{DoxyCompactList}\item 
+\hypertarget{classmetadataWindow_a02c2efcd387c97500bdaf89018b878e4}{virtual void {\bfseries extract\-Metadata} (const char $\ast$filename)}\label{classmetadataWindow_a02c2efcd387c97500bdaf89018b878e4}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classmetadataWindow_ab73b0d3a9fbdcaefef689d39af0407b6}{static void {\bfseries progress\-\_\-cb} (float progress, E\-B\-U\-Core\-::\-Progress\-Callback\-Level level, const char $\ast$function, const char $\ast$msg\-\_\-format,...)}\label{classmetadataWindow_ab73b0d3a9fbdcaefef689d39af0407b6}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classmetadataWindow_a55000d98104194ea2f70e7cc1fbb2848}{ref\-Glade\-Widgets} (const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&ref\-Glade)
+\begin{DoxyCompactList}\small\item\em To link the glade references to the required player widgets. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a10eadf8977d80290cf4645c3c952526f}{ref\-Glade\-Button} (const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&ref\-Glade)
+\begin{DoxyCompactList}\small\item\em To link the glade references to the buttons. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_ae95e4099d104c57d154296b93337ebf8}{connect\-Signal\-Clicked} (void)
+\begin{DoxyCompactList}\small\item\em To connect the clicked signal to events handler. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a04c912f00d93f013a4c669ad9413e0a6}{recursive\-Construct\-Tree\-View} (xercesc\-::\-D\-O\-M\-Element $\ast$el, Gtk\-::\-Expander $\ast$seed, int depth)
+\begin{DoxyCompactList}\small\item\em walk through the X\-M\-L tree and create the encapsulted gtk expander \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a9613f659ea4b4ab84c57ea14c09e94ec}{construct\-Tree\-View} (Glib\-::ustring X\-M\-Lfile)
+\begin{DoxyCompactList}\small\item\em contruct and display a simili treeview compound of encapsulated gtk expander \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_af97403dfa24c67b570e1c95e59d3aedb}{on\-\_\-import\-X\-M\-L\-\_\-clicked} (void)
+\item 
+void \hyperlink{classmetadataWindow_acdb85b5733ed9ca076a330041f981cd9}{on\-\_\-modify\-X\-M\-L\-\_\-clicked} (void)
+\item 
+void \hyperlink{classmetadataWindow_af13aa607d49190227ffe5929f2b9de06}{on\-\_\-export\-X\-M\-L\-\_\-clicked} (void)
+\item 
+void \hyperlink{classmetadataWindow_afc49d71e4b4465ab1723a04805800372}{on\-\_\-save\-X\-M\-L\-\_\-clicked} (void)
+\item 
+void \hyperlink{classmetadataWindow_a3bb9dde703d77825b33592fc0f811ae5}{on\-\_\-\-X\-M\-Lconformance\-\_\-clicked} (void)
+\item 
+\hypertarget{classmetadataWindow_a351de771ee76cd3c487bb9556102c452}{virtual void {\bfseries on\-\_\-open\-Expander\-\_\-changed} (Gtk\-::\-Expander $\ast$exp)}\label{classmetadataWindow_a351de771ee76cd3c487bb9556102c452}
+
+\item 
+std\-::string \hyperlink{classmetadataWindow_a3cb435b4c59fafc22e57fd379e52ed14}{remove\-Tags} (std\-::string str)
+\begin{DoxyCompactList}\small\item\em remove some tags \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classmetadataWindow_ac6711198307bb1a780d3fa13a486f256}{on\-\_\-extanderpressed\-\_\-pressed} (Gdk\-Event\-Button $\ast$event, Gtk\-::\-Menu $\ast$Menu)
+\begin{DoxyCompactList}\small\item\em callback when the extander is pressed \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a20dedcaf9057a85a8033b29a202214cf}{configure\-Encapsulted\-Box} (Gtk\-::\-Box $\ast$b)
+\begin{DoxyCompactList}\small\item\em Configure the Gtk Box encapsulated in the Gtk Expander. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_adf77f62354414a9f0c6c7157953b2603}{configure\-Expander} (Gtk\-::\-Expander $\ast$e)
+\begin{DoxyCompactList}\small\item\em Configure the Gtk Expander. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a857d8feb99b39353543ba06cb95c556b}{create\-Expander\-Text\-Box} (Gtk\-::\-Expander $\ast$ed, Gtk\-::\-Box $\ast$bd, std\-::string txt)
+\begin{DoxyCompactList}\small\item\em Create a text box in a Gtk Expander to display node text. \end{DoxyCompactList}\item 
+void \hyperlink{classmetadataWindow_a948d0b57a9da4e038765c783abccb995}{finish\-Encapsulation} (Gtk\-::\-Box $\ast$root, Gtk\-::\-Expander $\ast$node)
+\begin{DoxyCompactList}\small\item\em Finish the encapsultation of expanders and boxes. \end{DoxyCompactList}\item 
+\hypertarget{classmetadataWindow_aa374afa5e4b82cb23e244292228569a8}{void {\bfseries create\-Attributes\-Popup} (xercesc\-::\-D\-O\-M\-Named\-Node\-Map $\ast$dom\-\_\-attrs, Gtk\-::\-Expander $\ast$node)}\label{classmetadataWindow_aa374afa5e4b82cb23e244292228569a8}
+
+\item 
+\hypertarget{classmetadataWindow_a90eea834926af13f76f1953609e4d590}{bool {\bfseries is\-M\-X\-F} (std\-::string str)}\label{classmetadataWindow_a90eea834926af13f76f1953609e4d590}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \hyperlink{classmetadataWindow_aafbb917d9e593dbbea0619d87bb7be7a}{m\-\_\-ref\-Glade}
+\item 
+Gtk\-::\-Box $\ast$ \hyperlink{classmetadataWindow_a1b4bbe65be89497dfcccc1c6a25cdfe7}{metadata\-\_\-box}
+\item 
+Gtk\-::\-Button $\ast$ \hyperlink{classmetadataWindow_a6243706a8b1e55b9125f785af8bdf83b}{modify\-X\-M\-L}
+\item 
+Gtk\-::\-Button $\ast$ \hyperlink{classmetadataWindow_a2051e409ea2938b18915e3d8f978df56}{import\-X\-M\-L}
+\item 
+Gtk\-::\-Button $\ast$ \hyperlink{classmetadataWindow_ab381aa9da2c3ed515ef75a4d11cb25fb}{export\-X\-M\-L}
+\item 
+Gtk\-::\-Button $\ast$ \hyperlink{classmetadataWindow_ab38d435ed3b41749f31bd1b04fbc370a}{save\-X\-M\-L}
+\item 
+Gtk\-::\-Button $\ast$ \hyperlink{classmetadataWindow_ae95b4bc0b7741686138e6fcad39f05c2}{X\-M\-Lconformance}
+\item 
+Gtk\-::\-Viewport $\ast$ \hyperlink{classmetadataWindow_abcf0f3fc4cc9c73b68edbfef1d755a38}{viewport1}
+\item 
+Gtk\-::\-Expander $\ast$ \hyperlink{classmetadataWindow_a3895713778e334a6a35167c68d64e8da}{Expander}
+\item 
+Gtk\-::\-Expander $\ast$ \hyperlink{classmetadataWindow_a2455df9286c750582afdbcee85abc2ca}{previousnode}
+\item 
+\hypertarget{classmetadataWindow_a45d48d5da212ce96883a6c622dd81d0f}{xercesc\-::\-D\-O\-M\-Document $\ast$ {\bfseries metadata}}\label{classmetadataWindow_a45d48d5da212ce96883a6c622dd81d0f}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+this class represent the player window 
+
+This class controls all the player features and its links 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classmetadataWindow_a85cef3fe02d23d3ef7d4b8ab79860075}{\index{metadata\-Window@{metadata\-Window}!metadata\-Window@{metadata\-Window}}
+\index{metadata\-Window@{metadata\-Window}!metadataWindow@{metadata\-Window}}
+\subsubsection[{metadata\-Window}]{\setlength{\rightskip}{0pt plus 5cm}metadata\-Window\-::metadata\-Window (
+\begin{DoxyParamCaption}
+\item[{Base\-Object\-Type $\ast$}]{cobject, }
+\item[{const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&}]{ref\-Glade}
+\end{DoxyParamCaption}
+)}}\label{classmetadataWindow_a85cef3fe02d23d3ef7d4b8ab79860075}
+
+
+Class constructor. 
+
+
+\begin{DoxyItemize}
+\item The \hyperlink{classmetadataWindow}{metadata\-Window} class constructor instantiates a new E\-B\-U\-Core Metadata window and all its features.\par
+\par
+ 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em cobject} & \-: G\-Object is the fundamental type providing the common attributes and methods for all object types in G\-T\-K+. In this case, cobject define the instantiate gtk widget \\
+\hline
+\mbox{\tt in}  & {\em ref\-Glade} & \-: This is the reference to your glade design \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a85cef3fe02d23d3ef7d4b8ab79860075_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a7170d48cd47c54261398987daeb55118}{\index{metadata\-Window@{metadata\-Window}!$\sim$metadata\-Window@{$\sim$metadata\-Window}}
+\index{$\sim$metadata\-Window@{$\sim$metadata\-Window}!metadataWindow@{metadata\-Window}}
+\subsubsection[{$\sim$metadata\-Window}]{\setlength{\rightskip}{0pt plus 5cm}metadata\-Window\-::$\sim$metadata\-Window (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classmetadataWindow_a7170d48cd47c54261398987daeb55118}
+
+
+Class destructor. 
+
+
+\begin{DoxyItemize}
+\item The \hyperlink{classmetadataWindow}{metadata\-Window} class destructor destroys all variables and instanciate objects of \hyperlink{classmetadataWindow}{metadata\-Window} class. This is the garbage collector class. It is always called at the end of class life. 
+\end{DoxyItemize}
+
+\subsection{Member Function Documentation}
+\hypertarget{classmetadataWindow_a20dedcaf9057a85a8033b29a202214cf}{\index{metadata\-Window@{metadata\-Window}!configure\-Encapsulted\-Box@{configure\-Encapsulted\-Box}}
+\index{configure\-Encapsulted\-Box@{configure\-Encapsulted\-Box}!metadataWindow@{metadata\-Window}}
+\subsubsection[{configure\-Encapsulted\-Box}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::configure\-Encapsulted\-Box (
+\begin{DoxyParamCaption}
+\item[{Gtk\-::\-Box $\ast$}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a20dedcaf9057a85a8033b29a202214cf}
+
+
+Configure the Gtk Box encapsulated in the Gtk Expander. 
+
+this function makes the configuration of the Gtk Box encapsulated in the Gtk Expander \begin{DoxyNote}{Note}
+needs more documentation 
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em b} & \-: Pointer to a Gtk Box \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a20dedcaf9057a85a8033b29a202214cf_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_adf77f62354414a9f0c6c7157953b2603}{\index{metadata\-Window@{metadata\-Window}!configure\-Expander@{configure\-Expander}}
+\index{configure\-Expander@{configure\-Expander}!metadataWindow@{metadata\-Window}}
+\subsubsection[{configure\-Expander}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::configure\-Expander (
+\begin{DoxyParamCaption}
+\item[{Gtk\-::\-Expander $\ast$}]{e}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_adf77f62354414a9f0c6c7157953b2603}
+
+
+Configure the Gtk Expander. 
+
+this function makes the configuration of the Gtk Expander encapsulated where will be encapsulated a Gtk Box. \begin{DoxyNote}{Note}
+needs more documentation 
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em b} & \-: Pointer to a Gtk Expander \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_adf77f62354414a9f0c6c7157953b2603_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_ae95e4099d104c57d154296b93337ebf8}{\index{metadata\-Window@{metadata\-Window}!connect\-Signal\-Clicked@{connect\-Signal\-Clicked}}
+\index{connect\-Signal\-Clicked@{connect\-Signal\-Clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{connect\-Signal\-Clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::connect\-Signal\-Clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_ae95e4099d104c57d154296b93337ebf8}
+
+
+To connect the clicked signal to events handler. 
+
+This method connects each widgets clicked with its own signal. If you add a new clicked event, you must append its signal connection here.\par
+ \par
+ Currently, the following clicked signals have been connected\-:\par
+ \begin{DoxyItemize}
+\item {\ttfamily {\bfseries import\-X\-M\-L} When} connected, this button sends a signal to import an X\-M\-L metatada file into the metadata first viewer \item {\ttfamily {\bfseries export\-X\-M\-L} When} connected, this button sends a signal to export an X\-M\-L metatada from metadata viewer into an X\-M\-L file. \item {\ttfamily {\bfseries modify\-X\-M\-L} When} connected, this button sends a signal to open a secondary metadata viewer where the user will modify the metadata of the first viewer. \item {\ttfamily {\bfseries save\-X\-M\-L} When} connected, this button sends a signal to save the X\-M\-L metadata into the currently loaded M\-X\-F file. \item {\ttfamily {\bfseries X\-M\-Lconformance} When} connected, this button sends a signal to run an E\-B\-U\-Core conformance analysis on the metadata.\par
+ \par
+ 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em void} & \-: No params required \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This function and his documentation must be completed 
+\end{DoxyNote}
+\end{DoxyItemize}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_ae95e4099d104c57d154296b93337ebf8_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_ae95e4099d104c57d154296b93337ebf8_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a9613f659ea4b4ab84c57ea14c09e94ec}{\index{metadata\-Window@{metadata\-Window}!construct\-Tree\-View@{construct\-Tree\-View}}
+\index{construct\-Tree\-View@{construct\-Tree\-View}!metadataWindow@{metadata\-Window}}
+\subsubsection[{construct\-Tree\-View}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::construct\-Tree\-View (
+\begin{DoxyParamCaption}
+\item[{Glib\-::ustring}]{X\-M\-Lfile}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a9613f659ea4b4ab84c57ea14c09e94ec}
+
+
+contruct and display a simili treeview compound of encapsulated gtk expander 
+
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] XMLfile : Glib::ustring
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a9613f659ea4b4ab84c57ea14c09e94ec_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a857d8feb99b39353543ba06cb95c556b}{\index{metadata\-Window@{metadata\-Window}!create\-Expander\-Text\-Box@{create\-Expander\-Text\-Box}}
+\index{create\-Expander\-Text\-Box@{create\-Expander\-Text\-Box}!metadataWindow@{metadata\-Window}}
+\subsubsection[{create\-Expander\-Text\-Box}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::create\-Expander\-Text\-Box (
+\begin{DoxyParamCaption}
+\item[{Gtk\-::\-Expander $\ast$}]{ed, }
+\item[{Gtk\-::\-Box $\ast$}]{bd, }
+\item[{std\-::string}]{txt}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a857d8feb99b39353543ba06cb95c556b}
+
+
+Create a text box in a Gtk Expander to display node text. 
+
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] ed : Pointer to the destination Gtk Expander
+  @param[in] bd :  Pointer to the destination Gtk Box
+  @param[in] txt : This string contains the node text value
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a857d8feb99b39353543ba06cb95c556b_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a948d0b57a9da4e038765c783abccb995}{\index{metadata\-Window@{metadata\-Window}!finish\-Encapsulation@{finish\-Encapsulation}}
+\index{finish\-Encapsulation@{finish\-Encapsulation}!metadataWindow@{metadata\-Window}}
+\subsubsection[{finish\-Encapsulation}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::finish\-Encapsulation (
+\begin{DoxyParamCaption}
+\item[{Gtk\-::\-Box $\ast$}]{root, }
+\item[{Gtk\-::\-Expander $\ast$}]{node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a948d0b57a9da4e038765c783abccb995}
+
+
+Finish the encapsultation of expanders and boxes. 
+
+To create the attributes popup attached to an Gtk Expander.
+
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] root : Pointer to the destination Gtk Box
+  @param[in] node : Pointer to the destination Gtk Expander
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time.
+\end{DoxyReturn}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] root : Pointer to a collection of attributes nodes
+  @param[in] node : Pointer to the destination Gtk Expander
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a948d0b57a9da4e038765c783abccb995_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_af13aa607d49190227ffe5929f2b9de06}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-export\-X\-M\-L\-\_\-clicked@{on\-\_\-export\-X\-M\-L\-\_\-clicked}}
+\index{on\-\_\-export\-X\-M\-L\-\_\-clicked@{on\-\_\-export\-X\-M\-L\-\_\-clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-export\-X\-M\-L\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-export\-X\-M\-L\-\_\-clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_af13aa607d49190227ffe5929f2b9de06}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] void : no params
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_af13aa607d49190227ffe5929f2b9de06_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_ac6711198307bb1a780d3fa13a486f256}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-extanderpressed\-\_\-pressed@{on\-\_\-extanderpressed\-\_\-pressed}}
+\index{on\-\_\-extanderpressed\-\_\-pressed@{on\-\_\-extanderpressed\-\_\-pressed}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-extanderpressed\-\_\-pressed}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-extanderpressed\-\_\-pressed (
+\begin{DoxyParamCaption}
+\item[{Gdk\-Event\-Button $\ast$}]{event, }
+\item[{Gtk\-::\-Menu $\ast$}]{Menu}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{classmetadataWindow_ac6711198307bb1a780d3fa13a486f256}
+
+
+callback when the extander is pressed 
+
+display the attributes of E\-B\-U\-Core tag \begin{DoxyNote}{Note}
+needs more documentation 
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em event} & \-: \\
+\hline
+\mbox{\tt in}  & {\em name} & \-: std\-::vector$<$std\-::string$>$ contains attribue name \\
+\hline
+\mbox{\tt in}  & {\em value} & \-: std\-::vector$<$std\-::string$>$ contains attributes value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+\hypertarget{classmetadataWindow_af97403dfa24c67b570e1c95e59d3aedb}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-import\-X\-M\-L\-\_\-clicked@{on\-\_\-import\-X\-M\-L\-\_\-clicked}}
+\index{on\-\_\-import\-X\-M\-L\-\_\-clicked@{on\-\_\-import\-X\-M\-L\-\_\-clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-import\-X\-M\-L\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-import\-X\-M\-L\-\_\-clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_af97403dfa24c67b570e1c95e59d3aedb}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] void : no params
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_af97403dfa24c67b570e1c95e59d3aedb_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_acdb85b5733ed9ca076a330041f981cd9}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-modify\-X\-M\-L\-\_\-clicked@{on\-\_\-modify\-X\-M\-L\-\_\-clicked}}
+\index{on\-\_\-modify\-X\-M\-L\-\_\-clicked@{on\-\_\-modify\-X\-M\-L\-\_\-clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-modify\-X\-M\-L\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-modify\-X\-M\-L\-\_\-clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_acdb85b5733ed9ca076a330041f981cd9}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] void : no params
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_acdb85b5733ed9ca076a330041f981cd9_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_afc49d71e4b4465ab1723a04805800372}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-save\-X\-M\-L\-\_\-clicked@{on\-\_\-save\-X\-M\-L\-\_\-clicked}}
+\index{on\-\_\-save\-X\-M\-L\-\_\-clicked@{on\-\_\-save\-X\-M\-L\-\_\-clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-save\-X\-M\-L\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-save\-X\-M\-L\-\_\-clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_afc49d71e4b4465ab1723a04805800372}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] void : no params
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_afc49d71e4b4465ab1723a04805800372_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a3bb9dde703d77825b33592fc0f811ae5}{\index{metadata\-Window@{metadata\-Window}!on\-\_\-\-X\-M\-Lconformance\-\_\-clicked@{on\-\_\-\-X\-M\-Lconformance\-\_\-clicked}}
+\index{on\-\_\-\-X\-M\-Lconformance\-\_\-clicked@{on\-\_\-\-X\-M\-Lconformance\-\_\-clicked}!metadataWindow@{metadata\-Window}}
+\subsubsection[{on\-\_\-\-X\-M\-Lconformance\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::on\-\_\-\-X\-M\-Lconformance\-\_\-clicked (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a3bb9dde703d77825b33592fc0f811ae5}
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] void : no params
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a3bb9dde703d77825b33592fc0f811ae5_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a04c912f00d93f013a4c669ad9413e0a6}{\index{metadata\-Window@{metadata\-Window}!recursive\-Construct\-Tree\-View@{recursive\-Construct\-Tree\-View}}
+\index{recursive\-Construct\-Tree\-View@{recursive\-Construct\-Tree\-View}!metadataWindow@{metadata\-Window}}
+\subsubsection[{recursive\-Construct\-Tree\-View}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::recursive\-Construct\-Tree\-View (
+\begin{DoxyParamCaption}
+\item[{xercesc\-::\-D\-O\-M\-Element $\ast$}]{el, }
+\item[{Gtk\-::\-Expander $\ast$}]{seed, }
+\item[{int}]{depth}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a04c912f00d93f013a4c669ad9413e0a6}
+
+
+walk through the X\-M\-L tree and create the encapsulted gtk expander 
+
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] el : xercesc::DOMElement *
+  @param[in] seed : Gtk::Expander *
+  @param[in] depth : int
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a04c912f00d93f013a4c669ad9413e0a6_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a04c912f00d93f013a4c669ad9413e0a6_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a10eadf8977d80290cf4645c3c952526f}{\index{metadata\-Window@{metadata\-Window}!ref\-Glade\-Button@{ref\-Glade\-Button}}
+\index{ref\-Glade\-Button@{ref\-Glade\-Button}!metadataWindow@{metadata\-Window}}
+\subsubsection[{ref\-Glade\-Button}]{\setlength{\rightskip}{0pt plus 5cm}metadata\-Window\-::ref\-Glade\-Button (
+\begin{DoxyParamCaption}
+\item[{const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&}]{ref\-Glade}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a10eadf8977d80290cf4645c3c952526f}
+
+
+To link the glade references to the buttons. 
+
+This method loads all required glade's references to connect the metadata viewer buttons. If you add a new button to the metadata viewer into the Glade design, you must append his reference in this function.\par
+ \par
+ Currently, the following buttons have been referenced \-:\par
+ \begin{DoxyItemize}
+\item {\ttfamily {\bfseries import\-X\-M\-L} When} clicked, this button should import an X\-M\-L metatada file into the metadata viewer \item {\ttfamily {\bfseries export\-X\-M\-L} When} clicked, this button should export an X\-M\-L metatada from metadata viewer into an X\-M\-L file. \item {\ttfamily {\bfseries modify\-X\-M\-L} When} clicked, this button should open a secondary metadata viewer where the user will modify the metadata of the first viewer. \item {\ttfamily {\bfseries save\-X\-M\-L} When} clicked, this button will save the X\-M\-L metadata into the M\-X\-F file. \item {\ttfamily {\bfseries X\-M\-Lconformance} When} clicked, this button starts an E\-B\-U\-Core conformance analysis on the metadata. \par
+ \par
+ 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ref\-Glade} & \-: This is the reference to your glade player features -\/ It's mandatory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing if all is right or gtkmm-\/critical error/segmentation fault 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This function and his documentation must be completed 
+\end{DoxyNote}
+\end{DoxyItemize}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a10eadf8977d80290cf4645c3c952526f_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a55000d98104194ea2f70e7cc1fbb2848}{\index{metadata\-Window@{metadata\-Window}!ref\-Glade\-Widgets@{ref\-Glade\-Widgets}}
+\index{ref\-Glade\-Widgets@{ref\-Glade\-Widgets}!metadataWindow@{metadata\-Window}}
+\subsubsection[{ref\-Glade\-Widgets}]{\setlength{\rightskip}{0pt plus 5cm}void metadata\-Window\-::ref\-Glade\-Widgets (
+\begin{DoxyParamCaption}
+\item[{const Glib\-::\-Ref\-Ptr$<$ Gtk\-::\-Builder $>$ \&}]{ref\-Glade}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a55000d98104194ea2f70e7cc1fbb2848}
+
+
+To link the glade references to the required player widgets. 
+
+This method loads all required glade's references to connect the player widgets. If you add a new widget to the media player into the Glade design, you must append his reference in this function.\par
+ \par
+ Currently, the following widgets have been referenced \-:\par
+ \begin{DoxyItemize}
+\item {\ttfamily {\bfseries expander1} We} use this widget to encapsulate the multiple levels of X\-M\-L D\-O\-M \item {\ttfamily {\bfseries viewport1} We} use this widget to encapsulate the expander1\par
+ \par
+ 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ref\-Glade} & \-: This is the reference to your glade widgets -\/ It's mandatory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+noting or gtkmm-\/critical error/segmentation fault 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This function and his documentation must be completed or transfert to metadata class. 
+\end{DoxyNote}
+\end{DoxyItemize}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmetadataWindow_a55000d98104194ea2f70e7cc1fbb2848_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classmetadataWindow_a3cb435b4c59fafc22e57fd379e52ed14}{\index{metadata\-Window@{metadata\-Window}!remove\-Tags@{remove\-Tags}}
+\index{remove\-Tags@{remove\-Tags}!metadataWindow@{metadata\-Window}}
+\subsubsection[{remove\-Tags}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string metadata\-Window\-::remove\-Tags (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{str}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a3cb435b4c59fafc22e57fd379e52ed14}
+
+
+remove some tags 
+
+\begin{DoxyVerb}  @note needs more documentation
+  @param[in] str : a standard string 
+\end{DoxyVerb}
+ \begin{DoxyReturn}{Returns}
+nothing if all is right or an error at compilation time. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classmetadataWindow_a3895713778e334a6a35167c68d64e8da}{\index{metadata\-Window@{metadata\-Window}!Expander@{Expander}}
+\index{Expander@{Expander}!metadataWindow@{metadata\-Window}}
+\subsubsection[{Expander}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Expander$\ast$ metadata\-Window\-::\-Expander\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a3895713778e334a6a35167c68d64e8da}
+Expander the Gtk Expander is the E\-B\-U\-Core Metadata xml tree root \hypertarget{classmetadataWindow_ab381aa9da2c3ed515ef75a4d11cb25fb}{\index{metadata\-Window@{metadata\-Window}!export\-X\-M\-L@{export\-X\-M\-L}}
+\index{export\-X\-M\-L@{export\-X\-M\-L}!metadataWindow@{metadata\-Window}}
+\subsubsection[{export\-X\-M\-L}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Button$\ast$ metadata\-Window\-::export\-X\-M\-L\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_ab381aa9da2c3ed515ef75a4d11cb25fb}
+export an X\-M\-L file button \hypertarget{classmetadataWindow_a2051e409ea2938b18915e3d8f978df56}{\index{metadata\-Window@{metadata\-Window}!import\-X\-M\-L@{import\-X\-M\-L}}
+\index{import\-X\-M\-L@{import\-X\-M\-L}!metadataWindow@{metadata\-Window}}
+\subsubsection[{import\-X\-M\-L}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Button$\ast$ metadata\-Window\-::import\-X\-M\-L\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a2051e409ea2938b18915e3d8f978df56}
+import an X\-M\-L file button \hypertarget{classmetadataWindow_aafbb917d9e593dbbea0619d87bb7be7a}{\index{metadata\-Window@{metadata\-Window}!m\-\_\-ref\-Glade@{m\-\_\-ref\-Glade}}
+\index{m\-\_\-ref\-Glade@{m\-\_\-ref\-Glade}!metadataWindow@{metadata\-Window}}
+\subsubsection[{m\-\_\-ref\-Glade}]{\setlength{\rightskip}{0pt plus 5cm}Glib\-::\-Ref\-Ptr$<$Gtk\-::\-Builder$>$ metadata\-Window\-::m\-\_\-ref\-Glade\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_aafbb917d9e593dbbea0619d87bb7be7a}
+Glade references \hypertarget{classmetadataWindow_a1b4bbe65be89497dfcccc1c6a25cdfe7}{\index{metadata\-Window@{metadata\-Window}!metadata\-\_\-box@{metadata\-\_\-box}}
+\index{metadata\-\_\-box@{metadata\-\_\-box}!metadataWindow@{metadata\-Window}}
+\subsubsection[{metadata\-\_\-box}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Box$\ast$ metadata\-Window\-::metadata\-\_\-box\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a1b4bbe65be89497dfcccc1c6a25cdfe7}
+Metadata Box \hypertarget{classmetadataWindow_a6243706a8b1e55b9125f785af8bdf83b}{\index{metadata\-Window@{metadata\-Window}!modify\-X\-M\-L@{modify\-X\-M\-L}}
+\index{modify\-X\-M\-L@{modify\-X\-M\-L}!metadataWindow@{metadata\-Window}}
+\subsubsection[{modify\-X\-M\-L}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Button$\ast$ metadata\-Window\-::modify\-X\-M\-L\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a6243706a8b1e55b9125f785af8bdf83b}
+edit an X\-M\-L file button \hypertarget{classmetadataWindow_a2455df9286c750582afdbcee85abc2ca}{\index{metadata\-Window@{metadata\-Window}!previousnode@{previousnode}}
+\index{previousnode@{previousnode}!metadataWindow@{metadata\-Window}}
+\subsubsection[{previousnode}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Expander$\ast$ metadata\-Window\-::previousnode\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_a2455df9286c750582afdbcee85abc2ca}
+previousnode Pointer to store temporarly the current node selected \hypertarget{classmetadataWindow_ab38d435ed3b41749f31bd1b04fbc370a}{\index{metadata\-Window@{metadata\-Window}!save\-X\-M\-L@{save\-X\-M\-L}}
+\index{save\-X\-M\-L@{save\-X\-M\-L}!metadataWindow@{metadata\-Window}}
+\subsubsection[{save\-X\-M\-L}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Button$\ast$ metadata\-Window\-::save\-X\-M\-L\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_ab38d435ed3b41749f31bd1b04fbc370a}
+save an X\-M\-L file button \hypertarget{classmetadataWindow_abcf0f3fc4cc9c73b68edbfef1d755a38}{\index{metadata\-Window@{metadata\-Window}!viewport1@{viewport1}}
+\index{viewport1@{viewport1}!metadataWindow@{metadata\-Window}}
+\subsubsection[{viewport1}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Viewport$\ast$ metadata\-Window\-::viewport1\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_abcf0f3fc4cc9c73b68edbfef1d755a38}
+viewport1 the Gtk Viewport where is stored the expander \hypertarget{classmetadataWindow_ae95b4bc0b7741686138e6fcad39f05c2}{\index{metadata\-Window@{metadata\-Window}!X\-M\-Lconformance@{X\-M\-Lconformance}}
+\index{X\-M\-Lconformance@{X\-M\-Lconformance}!metadataWindow@{metadata\-Window}}
+\subsubsection[{X\-M\-Lconformance}]{\setlength{\rightskip}{0pt plus 5cm}Gtk\-::\-Button$\ast$ metadata\-Window\-::\-X\-M\-Lconformance\hspace{0.3cm}{\ttfamily [protected]}}}\label{classmetadataWindow_ae95b4bc0b7741686138e6fcad39f05c2}
+E\-B\-Ucore conformance button 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{metadataWindow_8hpp}{metadata\-Window.\-hpp}\item 
+\hyperlink{metadataWindow_8cpp}{metadata\-Window.\-cpp}\end{DoxyCompactItemize}

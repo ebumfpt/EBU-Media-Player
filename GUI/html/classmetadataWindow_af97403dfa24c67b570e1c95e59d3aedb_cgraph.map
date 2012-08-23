@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classmetadataWindow.html#a9613f659ea4b4ab84c57ea14c09e94ec" title="contruct and display a simili treeview compound of encapsulated gtk expander" alt="" coords="201,129,386,170"/>
+<area shape="rect" id="node5" href="$classmetadataWindow.html#a04c912f00d93f013a4c669ad9413e0a6" title="walk through the XML tree and create the encapsulted gtk expander" alt="" coords="435,129,619,170"/>
+<area shape="rect" id="node7" href="$classmetadataWindow.html#a20dedcaf9057a85a8033b29a202214cf" title="Configure the Gtk Box encapsulated in the Gtk Expander." alt="" coords="697,5,881,46"/>
+<area shape="rect" id="node9" href="$classmetadataWindow.html#adf77f62354414a9f0c6c7157953b2603" title="Configure the Gtk Expander." alt="" coords="697,70,881,111"/>
+<area shape="rect" id="node11" href="$classmetadataWindow.html#a1ff7ab4fe0963be73d7669fab2d4cc7a" title="Finish the encapsultation of expanders and boxes." alt="" coords="667,136,911,163"/>
+<area shape="rect" id="node13" href="$classmetadataWindow.html#ac6711198307bb1a780d3fa13a486f256" title="callback when the extander is pressed" alt="" coords="700,187,879,229"/>
+<area shape="rect" id="node15" href="$classmetadataWindow.html#a857d8feb99b39353543ba06cb95c556b" title="Create a text box in a Gtk Expander to display node text." alt="" coords="678,253,901,294"/>
+</map>
