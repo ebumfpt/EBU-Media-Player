@@ -17,9 +17,6 @@
 #include <iostream>
 #include <string>
 #include <boost/regex.hpp>
-//#include <algorithm>   // transform()
-//#include <cctype>      // toupper(), tolower()
-//#include <functional>
 #include <stdexcept>
 
 #include <bmx/mxf_reader/MXFFileReader.h>
@@ -60,18 +57,18 @@ public:
 	 * @param[in] cobject : GObject is the fundamental type providing the common attributes and methods for all object types in GTK+. In this case, cobject define the instantiate gtk widget 
 	 * @param[in] refGlade : This is the reference to your glade design 
    */
-  metadataWindow(BaseObjectType* cobject, 
+  metadataWindow( BaseObjectType* cobject, 
 							const Glib::RefPtr<Gtk::Builder>& refGlade);
   /*!*
    * @brief Class destructor
    * @brief The metadataWindow class destructor destroys all variables and instanciate objects of metadataWindow class. This is the garbage collector class. It is always called at the end of class life.
    *
    */
-  virtual ~metadataWindow();
+  ~metadataWindow();
 	static void progress_cb(float progress, EBUCore::ProgressCallbackLevel level, const char *function, const char *msg_format, ...);
 
-	
-	virtual void extractMetadata(const char* filename);
+	void extractMetadata(std::string filename);
+	void setWindowsPosition(int x, int y);
 protected:
 	/**
 	 * @fn void refGladeWidgets(const Glib::RefPtr<Gtk::Builder>& refGlade)
@@ -275,8 +272,8 @@ protected:
 	Gtk::Expander * Expander; /*!< Expander the Gtk Expander is the EBUCore Metadata xml tree root */
 	
 	Gtk::Expander * previousnode; /*!< previousnode Pointer to store temporarly the current node selected */
+	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
 	xercesc::DOMDocument * metadata;
-
 };
 
 #endif

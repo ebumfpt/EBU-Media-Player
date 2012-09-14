@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ebuCoreMain xmlns="urn:ebu:metadata-schema:ebuCore_2011" schema="" version="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+  <coreMetadata>
+    <title attributiondate="2012-01-01">
+      <dc:title xml:lang="fr-can">Berlĩn Wall 50th</dc:title>
+    </title>
+    <alternativeTitle typeLabel="headline">
+      <dc:title xml:lang="en">Berlin Wall 50th</dc:title>
+    </alternativeTitle>
+    <creator/>
+    <subject>
+      <dc:subject xml:lang="en"/>
+      <subjectCode>EBUNMSCategoryCode:EXCH</subjectCode>
+    </subject>
+    <subject>
+      <dc:subject xml:lang="en">In or about Europe and EU</dc:subject>
+      <subjectCode>EBUNMSWebcatCode:EUROPE</subjectCode>
+    </subject>
+    <description typeLabel="pubStatus">
+      <dc:description xml:lang="en">NMSStatusCode:TBC</dc:description>
+    </description>
+    <description typeLink="EBUNMSDescription:dopesheet">
+      <dc:description xml:lang="en"> The Berlin Wall (German: Berliner Mauer) was a barrier constructed by the
+        German Democratic Republic (GDR, East Germany) starting August 13, 1961, that completely cut
+        off West Berlin from surrounding East Germany and from East Berlin. The barrier included
+        guard towers placed along large concrete walls[1], which circumscribed a wide area (later
+        known as the "death strip") that contained anti-vehicle trenches,
+        "fakir beds" and other defenses. The Soviet-dominated Eastern Bloc
+        officially claimed that the wall was erected to protect its population from fascist elements
+        conspiring to prevent the "will of the people" in building a Socialist
+        State in East Germany. However, in practice, the Wall served to prevent the massive
+        emigration and defection that marked Germany and the communist Eastern Bloc during the
+        post-World War II period. </dc:description>
+    </description>
+    <publisher>
+      <role typeLabel="provider"/>
+    </publisher>
+    <date>
+      <created startDate="2011-08-13"/>
+      <issued startDate="2010-08-12"/>
+      <modified startDate="2010-08-17"/>
+    </date>
+    <type>
+      <objectType typeLabel="news item"/>
+    </type>
+    <identifier typeLabel="itemId">
+      <dc:identifier xml:lang="en">tag:ebu.ch,2011:504483</dc:identifier>
+    </identifier>
+    <coverage>
+      <spatial>
+        <location typeLink="cptype:city">
+          <name>BERLIN</name>
+        </location>
+        <location typeLink="cptype:country">
+          <name>GERMANY</name>
+          <code>country:DE</code>
+        </location>
+      </spatial>
+    </coverage>
+    <rights formatIDRefs="e10002 e10003" typeLabel="metadataUsageRights">
+      <dc:rights xml:lang="en">The metadata contained in this file is provided for test purpose only</dc:rights>
+      <rightsHolder/>
+    </rights>
+    <publicationHistory>
+      <firstPublicationDate>2011-08-13</firstPublicationDate>
+      <firstPublicationTime>00:00:00</firstPublicationTime>
+      <firstPublicationChannel/>
+    </publicationHistory>
+  </coreMetadata>
+
+  <metadataProvider/>
+
+</ebuCoreMain>

@@ -13,8 +13,9 @@
  *
  */
 
-#include <gtkmm.h>
-#include <gdkmm.h>
+#include <gtkmm-3.0/gtkmm.h>
+#include <gtkmm-3.0/gtkmm/scalebutton.h>
+#include <gdkmm-3.0/gdkmm.h>
 #include <gstreamermm.h>
 #include <gdk/gdkx.h>
 #include <iostream>
@@ -22,8 +23,11 @@
 #include <iterator>
 #include <sstream>
 #include <iomanip>
+#include <time.h>
+#include "mediainfo.h"
 
 #include "metadataWindow.hpp"
+#include "playlistWindow.hpp"
 /*! \class playerWindow
  * \brief this class represent the player window
  *
@@ -36,10 +40,10 @@ public:
   /*!*
    * @brief Class constructor
    * @brief The playerWindow class constructor instantiates a new player window and all  its features.\n\n
-	 * @param[in] cobject : GObject is the fundamental type providing the common attributes and methods for all object types in GTK+. In this case, cobject define the instantiate gtk widget 
-	 * @param[in] refGlade : This is the reference to your glade design 
+	 * @param[in] cobject : GObject is the fundamental type providing the common attributes and methods for all object types in GTK+. In this case, cobject define the instantiate gtk widget
+	 * @param[in] refGlade : This is the reference to your glade design
    */
-  playerWindow(BaseObjectType* cobject, 
+  playerWindow(BaseObjectType* cobject,
 							const Glib::RefPtr<Gtk::Builder>& refGlade);
   /*!*
    * @brief Class destructor
@@ -47,20 +51,18 @@ public:
    *
    */
   virtual ~playerWindow();
+  void setPlayedFile(std::string path);
+protected:
+
 	/**
-	 * @fn void multipleWindows(Gtk::Window* win)
+	 * @fn void multipleWindows(void)
    * @brief To include more gtk windows to the player
    * @brief \n \n
-	 * @param[in] win : This is the metadataWindow - It's mandatory.
+	 * @param[in] void : no params.
    * @return nothing if all is right or gtkmm-critical error/segmentation fault
 	 * @note This function and his documentation must be completed
    */
-	void multipleWindows(Gtk::Window* win);		
-
-	/* new */
-
-
-protected:
+	void loadWindows(void);
 	// link the glade references
 	/**
 	 * @fn void refGladeMenu (const Glib::RefPtr<Gtk::Builder>& refGlade)
@@ -109,20 +111,8 @@ protected:
    */
 	void refGladeButton(const Glib::RefPtr<Gtk::Builder>& refGlade);
 	/**
-	 * @fn void refGladeWindows(const Glib::RefPtr<Gtk::Builder>& refGlade)
-   * @brief To link the glade references to the Gtk Windows
-   * @brief This method loads all required glade's references to connect the multiple Gtk windows. If you add a new Gtk Window into the Glade design, you must append his reference in this function.\n \n
-	 * @brief Currently, the following windows have been referenced :\n
-	 * \li \c \b metadataWindow We use this window to display any XML metatada 
-	 * \li \c \b playlistWindow We use this window to display a playlist\n \n
-	 * @param[in] refGlade : This is the reference to your glade windows - It's mandatory.
-   * @return noting or gtkmm-critical error/segmentation fault
-	 * @note This function and his documentation must be completed
-   */
-	void refGladeWindows(const Glib::RefPtr<Gtk::Builder>& refGlade);
-	/**
 	 * @fn void connectSignalClicked (void)
-   * @brief To connect the clicked signal to events handler 
+   * @brief To connect the clicked signal to events handler
    * @brief This method connects each widgets clicked with its own signal. If you add a new clicked event, you must append its signal connection here.\n \n
 	 * @brief Currently, the following clicked signals have been connected:\n
 	 * \li \c \b play When connected, the play button sends a signal to start playback through a callback function.
@@ -171,7 +161,7 @@ protected:
    */
 	void connectSignalRealize(void);
 
-  
+
 	/**
 	 * @fn void on_videoDrawingArea_realize(void)
    * @brief To create and connect the resources associated with the Gtk.Gdk.Window.
@@ -182,8 +172,8 @@ protected:
   void on_videoDrawingArea_realize(void);
 		/**
 	 * @fn void on_bus_message_sync(const Glib::RefPtr<Gst::Message>& message)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] message : const Glib::RefPtr<Gst::Message>&
    * @return a bool if all is right or an error at compilation time.
@@ -191,8 +181,8 @@ protected:
   void on_bus_message_sync(const Glib::RefPtr<Gst::Message>& message);
 		/**
 	 * @fn bool on_bus_message(const Glib::RefPtr<Gst::Bus>& bus, const Glib::RefPtr<Gst::Message>& message)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] message : const Glib::RefPtr<Gst::Message>&
 	 * @param[in] bus : const Glib::RefPtr<Gst::Bus>&
@@ -201,8 +191,8 @@ protected:
   bool on_bus_message(const Glib::RefPtr<Gst::Bus>& bus, const Glib::RefPtr<Gst::Message>& message);
 	/**
 	 * @fn on_video_pad_got_buffer(const Glib::RefPtr<Gst::Pad>& pad, const Glib::RefPtr<Gst::MiniObject>& buffer)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] pad : const Glib::RefPtr<Gst::Pad>&
 	 * @param[in] buffer : const Glib::RefPtr<Gst::MiniObject>&
@@ -211,17 +201,19 @@ protected:
   bool on_video_pad_got_buffer(const Glib::RefPtr<Gst::Pad>& pad, const Glib::RefPtr<Gst::MiniObject>& buffer);
 	/**
 	 * @fn void on_play_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
    */
   void on_play_clicked(void);
+	void on_loop_clicked(void);
+	void on_shuffle_clicked(void);
 	/**
 	 * @fn void on_pause_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -229,8 +221,8 @@ protected:
   void on_pause_clicked(void);
 	/**
 	 * @fn void on_stop_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -238,8 +230,8 @@ protected:
   void on_stop_clicked(void);
 	/**
 	 * @fn void on_rewind_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -247,17 +239,35 @@ protected:
   void on_rewind_clicked(void);
 	/**
 	 * @fn void on_forward_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
    */
   void on_forward_clicked(void);
 	/**
+	 * @fn void on_previous_clicked(void)
+   * @brief Action to do when the previous button is pressed
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+  void on_previous_clicked(void);
+	/**
+	 * @fn void on_next_clicked(void)
+   * @brief Action to do when the next button is pressed
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+  void on_next_clicked(void);
+	/**
 	 * @fn bool on_progress_scale_value_changed(Gtk::ScrollType type, double value)
-   * @brief 
-   * @brief 
+   * @brief To update the timecode progress scale
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] type : Gtk::ScrollType
 	 * @param[in] value : double
@@ -265,9 +275,28 @@ protected:
    */
   bool on_progress_scale_value_changed(Gtk::ScrollType type, double value);
 	/**
+	 * @fn void on_fullscreen_clicked(void)
+   * @brief To switch in fullscreen mode
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+  void on_fullscreen_clicked(void);
+	/**
+	 * @fn void on_volume_scale_value_changed(Gtk::ScrollType type, double volume)
+   * @brief To update the volume progress scale
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] type : Gtk::ScrollType
+	 * @param[in] volume : int32_t
+   * @return nothing if all is right or an error at compilation time.
+   */
+	bool on_volume_scale_value_changed(Gtk::ScrollType type, double value);
+	/**
 	 * @fn void display_label_progress(gint64 pos, gint64 len)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] pos : gint64
 	 * @param[in] len : gint64
@@ -276,17 +305,44 @@ protected:
   void display_label_progress(gint64 pos, gint64 len);
 	/**
 	 * @fn bool on_timeout(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return a bool if all is right or an error at compilation time.
    */
 	bool on_timeout(void);
 	/**
+	 * @fn bool on_timeout_playlist(void)
+   * @brief
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return a bool if all is right or an error at compilation time.
+   */
+	bool on_timeout_playlist(void);
+	/**
+	 * @fn bool on_timeout_fullscreen(void)
+   * @brief To hide the player controls when fullscreen mode is enable
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return a bool if all is right or an error at compilation time.
+   */
+	bool on_timeout_fullscreen(void);
+	/**
+	 * @fn bool on_mousemove(GdkEventMotion* event)
+   * @brief To detect mouse motion when fullscreen mode enable to show the player controls
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] event : a GdkEventMotion pointer
+   * @return a bool if all is right or an error at compilation time.
+   */
+	bool on_mousemove(GdkEventMotion* event);
+	/**
 	 * @fn void on_metadata_show_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -294,8 +350,8 @@ protected:
 	void on_metadata_show_clicked(void);
 	/**
 	 * @fn void on_playlist_show_clicked(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -303,17 +359,26 @@ protected:
 	void on_playlist_show_clicked(void);
 	/**
 	 * @fn void on_openMenu_activate(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
    */
   void on_openMenu_activate(void);
 	/**
+	 * @fn void on_openPlaylistMenuItem_activate(void)
+   * @brief
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void on_openPlaylistMenuItem_activate(void);
+	/**
 	 * @fn void on_quitMenu_activate(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -321,8 +386,8 @@ protected:
 	void on_quitMenu_activate(void);
 	/**
 	 * @fn void on_EBUCoreMenu_activate(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -330,8 +395,8 @@ protected:
 	void on_EBUCoreMenu_activate(void);
 	/**
 	 * @fn void on_metadataMenuItem_activate(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
@@ -339,36 +404,115 @@ protected:
 	void on_metadataMenuItem_activate(void);
 	/**
 	 * @fn void on_playlistMenuItem_activate(void)
-   * @brief 
-   * @brief 
+   * @brief
+   * @brief
 	 * @note needs more documentation
 	 * @param[in] void : no params
    * @return nothing if all is right or an error at compilation time.
    */
 	void on_playlistMenuItem_activate(void);
-
+	/**
+	 * @fn void filterFiles(Gtk::FileChooserDialog chooser)
+   * @brief
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] chooser : The Gtk File Chooser Dialog where is apply the file filter
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void filterFiles(Gtk::FileChooserDialog * chooser);
+	/**
+	 * @fn bool isMXF(std::string str)
+   * @brief To identify if the selected file is a MXFfile
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] str : This standard string must is the filename of the potential mxf file
+   * @return a bool if all is right or an error at compilation time.
+   */
 	bool isMXF(std::string str);
+	/**
+	 * @fn std::string getStateString(Gst::State state)
+   * @brief This function return the Gstreamer current state as a standard string
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] state : Needs to be a valid Gst::State
+   * @return a string if all is right or an error at compilation time.
+   */
+	std::string getStateString(Gst::State state);
+	/**
+	 * @fn Gst::State getState(void)
+   * @brief To identify the current state of Gstreamer
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return a Gst::State if all is right or an error at compilation time.
+   */
+	Gst::State getState();
+	/**
+	 * @fn bool setState(Gst::State state)
+   * @brief To set the current state of Gstreamer
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] state : Needs to be a valid Gst::State
+   * @return a bool if all is right or an error at compilation time.
+   */
+	bool setState(Gst::State state);
+	/**
+	 * @fn void initUIStates(void)
+   * @brief To initiliaze user interface states
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void initUIStates(void);
+	/**
+	 * @fn void streamInformation(std::string filename)
+   * @brief To seek information about a stream
+   * @brief
+	 * @note needs more documentation
+	 * @param[in] void : no params
+   * @return nothing if all is right or an error at compilation time.
+   */
+	//void streamInformation(std::string filename);
+	void on_timecode_pressed(void);
 
-protected:
 	// Glade reference
-  Glib::RefPtr<Gtk::Builder> m_refGlade; /*!< Glade references */
+  Glib::RefPtr<Gtk::Builder> m_refGlade; /*!< m_refGlade : Glade references */
 	// Gtk Windows
 	// Gtk widgets
-  Gtk::DrawingArea* videoDrawingArea;/*!< Gtk drawing area */
-  Gtk::Label* progress_label;/*!< Timecode label*/
-  Gtk::Scale* progress_scale;/*!< Timecode progress scale*/
+  Gtk::DrawingArea* videoDrawingArea;/*!< videoDrawingArea : Gtk drawing area */
+  Gtk::MenuBar* menubar;/*!< videoDrawingArea : Gtk drawing area */
+  Gtk::Button* progress_label;/*!< progress_label Timecode label in hours:minutes:secondes*/
+  Gtk::Button* progress_total_label;/*!< progress_label Timecode label in hours:minutes:secondes*/
+  Gtk::Button* frame_label;/*!< frame_label Timecode label in frames*/
+  Gtk::Button* frame_total_label;/*!< frame_total_label Timecode label in frames*/
+  Gtk::Scale* progress_scale;/*!< progress_scale Timecode progress scale*/
   Gtk::Button* play; /*!< start the playback button*/
   Gtk::Button* pause;/*!< pause the playback button*/
   Gtk::Button* stop;/*!< stop the playback button*/
   Gtk::Button* rewind;/*!< rewind the playback button*/
   Gtk::Button* forward;/*!< forward the playback button*/
-  Gtk::Button* fullscreen;/*!< Fullscreen switch button*/
+  Gtk::Button* next;/*!< next track playback button*/
+  Gtk::Button* previous;/*!< previous track playback button*/
+  Gtk::Button* loopplaylist;/*!< next track playback button*/
+  Gtk::Button* shuffleplaylist;/*!< previous track playback button*/
+  Gtk::Button* fullscreenButton;/*!< Fullscreen switch button*/
+  Gtk::Button* unfullscreenButton;/*!< Fullscreen switch button*/
+  Gtk::Button* trackoption_show;/*!< trackoption_show playback option (audio/subtitle/etc) button*/
+  Gtk::AspectFrame* borderleft;/*!< borderleft aspect frame left */
+  Gtk::AspectFrame* borderright;/*!< borderright aspect frame right*/
+  Gtk::Box* timeline_box;/*!< timeline_box gtk box who contains the timeline/timecode */
+  Gtk::Box* player_control_box;/*!< player_control_box gtk box who contains player controls */
+  Gtk::Box* status_box;/*!< status_box gtk box who contains the status bar */
 	Gtk::Button* metadata_show;/*!< Metadata viewer button*/
 	Gtk::Button* playlist_show;/*!< Playlist viewer button*/
+  Gtk::Scale* volume_scale;/*!< volume_scale : volume levels*/
+  Gtk::ScaleButton* volume_scale_button;/*!< volume_scale_button : iconize the volume levels*/
 	// Menu bar
-	// Gtk MenuItems	
+	// Gtk MenuItems
 	// _File
   Gtk::MenuItem* openMenuItem;/*!< open menu item*/
+	Gtk::MenuItem* openPlaylistMenuItem; /*!< open playlist menu item */
 	Gtk::MenuItem* quitMenuItem;/*!< quit menu item*/
 	// _View
 	Gtk::MenuItem* metadataMenuItem;/*!< open metadata menu item*/
@@ -376,7 +520,7 @@ protected:
 	// _Help
 	Gtk::MenuItem* EBUCoreMenuItem;/*!< open ebucore menu item*/
 
-	// Gstreamer 
+	// Gstreamer
   Glib::RefPtr<Gst::PlayBin2> playbin;/*!< playbin needs more documentation*/
   Glib::RefPtr<Gst::XImageSink> video_sink;/*!< video_sink needs more documentation*/
   sigc::connection timeout_connection;/*!< timeout_connection needs more documentation*/
@@ -384,15 +528,27 @@ protected:
   gint64 duration;/*!< duration needs more documentation*/
   gulong x_window_id;/*!< x_window_id needs more documentation*/
   gulong pad_probe_id;/*!< pad_probe_id needs more documentation*/
-	
+
 	/**/
 	int width;/*!< width needs more documentation*/
 	int height;/*!< height needs more documentation*/
 	/**/
-	// Metadata Window	
+	// Metadata Window
 	// Gtk::Window
-	Gtk::Window * metadataWindow; /*!< metadata Window */
-	Gtk::Window * playlistWindow; /*!< playlist Window */
+	metadataWindow * winMetadata; /*!< metadata Window */
+	playlistWindow * winPlaylist; /*!< playlist Window */
+
+	bool fileLoaded;
+	bool timecodeStatus;
+
+	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
+	bool fullscreenstate; /*!< fullscreenstate bolean to know if fullscreen is enable */
+	bool motiondetected; /*!< motiondetected bolean to know if a mouse motion occurs */
+	time_t  nextmotiondetection; /*!< nextmotiondetection time before next motion detection */
+  sigc::connection timeout_fullscreen;/*!< timeout_fullscreen timer to hide player controls */
+	sigc::connection mouse_motion_signal_drawingArea;/*!< mouse_motion_signal_drawingArea mouse motion detection signal for the drawing area*/
+	sigc::connection timeout_playlist;/*!< timeout_playlist */
+
 };
 
 #endif

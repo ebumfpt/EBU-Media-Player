@@ -55,6 +55,10 @@ metadataWindow::~metadataWindow()
 {
 }
 
+void metadataWindow::setWindowsPosition(int x, int y) {
+	move(x,y);
+}
+
 // configure the gtk box encapsulated in the gtk expander
 void metadataWindow::configureEncapsultedBox(Gtk::Box * b) {
 	// define the vertical alignment
@@ -158,14 +162,27 @@ void metadataWindow::progress_cb(float progress, EBUCore::ProgressCallbackLevel 
 	free(newline_msg_format);
 }
 
-void metadataWindow::extractMetadata(const char* filename) {
+void metadataWindow::extractMetadata(std::string filename) {
 
 	bmx::connect_libmxf_logging();
-	xercesc::XMLPlatformUtils::Initialize();
-	//metadata = EBUCore::ExtractEBUCoreMetadata(filename, &progress_cb);
-	
-	
+	//xercesc::XMLPlatformUtils::Initialize();
+	std::cout<<"chemin et nom du fichier mxf : "<<filename<<std::endl;
+	std::string output = Glib::get_current_dir ()+"/mxfmetadata.xml";
+	std::cout<< output<<std::endl;
+	EBUCore::ExtractEBUCoreMetadata(filename.c_str(), output.c_str(), &progress_cb);
 
+	xercesc::XMLPlatformUtils::Initialize();
+	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
+	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(output.c_str());
+	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
+	viewport1->remove();
+	Expander->set_use_markup(true);
+	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
+	
+	recursiveConstructTreeView(dom_root, Expander,0);
+
+	viewport1->add(*Expander);
 }
 void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth) {
 	// create a new box to encapsulte the tree levels
@@ -278,7 +295,7 @@ void metadataWindow::on_importXML_clicked(void)
 
   //	std::string str =   Glib::filename_display_basename(chooser.get_filename());
 		
-	//constructTreeView(chooser.get_filename());
+	constructTreeView(chooser.get_filename());
 		//extractMetadata("/home/dossantos/Videos/withEBUCore.MXF");
 		
   }
@@ -320,19 +337,13 @@ std::string metadataWindow::removeTags(std::string str) {
 }
 
 bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu) {
-	{
-  if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) )
-  {
+  if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) ) {
 
 		Menu->popup(event->button, event->time);
 
     return true; //It has been handled.
   }
-  else
-    return false;
-}
-//inside on_button_press_event function
-
+  return false;
 }
 
 void metadataWindow::on_openExpander_changed(Gtk::Expander * exp) {

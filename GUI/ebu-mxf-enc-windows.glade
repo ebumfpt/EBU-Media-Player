@@ -131,14 +131,9 @@
     </child>
   </object>
   <object class="GtkWindow" id="METADATAVIEW-EBU-MXF-ENCODER">
-    <property name="width_request">370</property>
-    <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="no_show_all">True</property>
     <property name="title" translatable="yes">Metadata View</property>
-    <property name="resizable">False</property>
-    <property name="default_width">370</property>
-    <property name="default_height">600</property>
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">mail-attachment</property>
     <property name="gravity">west</property>
@@ -146,6 +141,7 @@
     <signal name="destroy" handler="on_METADATAVIEW-EBU-MXF-ENCODER_destroy" swapped="no"/>
     <child>
       <object class="GtkBox" id="box2">
+        <property name="height_request">532</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
@@ -251,8 +247,7 @@
             </child>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow2">
-                <property name="width_request">300</property>
-                <property name="height_request">400</property>
+                <property name="width_request">250</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="vexpand">True</property>
@@ -305,9 +300,7 @@
             </child>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow3">
-                <property name="width_request">300</property>
-                <property name="height_request">400</property>
-                <property name="visible">True</property>
+                <property name="width_request">250</property>
                 <property name="can_focus">True</property>
                 <property name="vexpand">True</property>
                 <property name="shadow_type">in</property>
@@ -342,7 +335,6 @@
             </child>
             <child>
               <object class="GtkAspectFrame" id="aspectframe3">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label_xalign">0</property>
                 <property name="shadow_type">in</property>
@@ -515,58 +507,36 @@
         <property name="border_width">5</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkTreeView" id="playlistTreeview">
+          <object class="GtkBox" id="playlistBox">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
-            <property name="model">playlistStore</property>
-            <child internal-child="selection">
-              <object class="GtkTreeSelection" id="treeview-selection3"/>
-            </child>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkTreeViewColumn" id="playlistnameccol">
-                <property name="title" translatable="yes">name</property>
+              <object class="GtkScrolledWindow" id="playlistScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkCellRendererText" id="playlistnamecell"/>
-                  <attributes>
-                    <attribute name="text">0</attribute>
-                  </attributes>
+                  <object class="GtkTreeView" id="playlistTreeview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">playlistStore</property>
+                    <property name="reorderable">True</property>
+                    <property name="rules_hint">True</property>
+                    <property name="hover_selection">True</property>
+                    <property name="rubber_banding">True</property>
+                    <property name="enable_grid_lines">vertical</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="playlistTreeviewSelection"/>
+                    </child>
+                  </object>
                 </child>
               </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn" id="playlistcol">
-                <property name="title" translatable="yes">length</property>
-                <child>
-                  <object class="GtkCellRendererText" id="playlistlengthcell"/>
-                  <attributes>
-                    <attribute name="text">1</attribute>
-                  </attributes>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn" id="playlistformatcol">
-                <property name="title" translatable="yes">format</property>
-                <child>
-                  <object class="GtkCellRendererText" id="playlistformatcell"/>
-                  <attributes>
-                    <attribute name="text">2</attribute>
-                  </attributes>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn" id="playlistdateofcreationcol">
-                <property name="title" translatable="yes">date of creation</property>
-                <child>
-                  <object class="GtkCellRendererText" id="playlistdateofcreationcell"/>
-                  <attributes>
-                    <attribute name="text">3</attribute>
-                  </attributes>
-                </child>
-              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -576,7 +546,133 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkBox" id="playlistControls">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkAspectFrame" id="aspectframe4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="openplaylist">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Open a playlist (*.m3u)</property>
+                <property name="tooltip_text" translatable="yes">Open a playlist (*.m3u)</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_openplaylist_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image31">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">document-open</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="saveplaylist">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Save the current playlist</property>
+                <property name="tooltip_text" translatable="yes">Save the current playlist</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_saveplaylist_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image30">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">document-save-as</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="removefromplaylist">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Remove the selected file from the playlist</property>
+                <property name="tooltip_text" translatable="yes">Remove the selected file from the playlist</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_removefromplaylist_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image29">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">list-remove</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="addtoplaylist">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">8</property>
+                <property name="height_request">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Add a file to the playlist</property>
+                <property name="tooltip_text" translatable="yes">Add a file to the playlist</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_addtoplaylist_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image28">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">list-add</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
     </child>
@@ -717,11 +813,9 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
     <property name="stock">gtk-execute</property>
   </object>
   <object class="GtkWindow" id="PLAYER-EBU-MXF-ENCODER">
-    <property name="width_request">600</property>
-    <property name="height_request">370</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">EBU Player</property>
-    <property name="role">Display the ebu mxf player</property>
+    <property name="title" translatable="yes">EBU Media Player</property>
+    <property name="role">Display the ebu media player</property>
     <property name="default_width">600</property>
     <property name="default_height">370</property>
     <property name="destroy_with_parent">True</property>
@@ -761,6 +855,19 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_openMenu_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="openPlaylistMenuItem">
+                        <property name="label" translatable="yes">Open a _Playlist</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Open a M3U playlist</property>
+                        <property name="image">image32</property>
+                        <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="on_openPlaylistMenuItem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -1045,7 +1152,7 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
             <property name="can_focus">False</property>
             <property name="vexpand">True</property>
             <child>
-              <object class="GtkAspectFrame" id="aspectframe4">
+              <object class="GtkAspectFrame" id="borderleft">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label_xalign">0</property>
@@ -1072,9 +1179,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                     <property name="height_request">159</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <signal name="realize" handler="on_videoDrawingArea_realize" swapped="no"/>
+                    <signal name="motion-notify-event" handler="on_mousemove" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -1090,27 +1199,34 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                     <property name="hexpand">True</property>
                     <property name="border_width">5</property>
                     <child>
-                      <object class="GtkLabel" id="progress_label">
+                      <object class="GtkButton" id="progress_label">
+                        <property name="label" translatable="yes">000:00:00</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_markup" translatable="yes">Timecode in hours:minutes:secondes</property>
-                        <property name="tooltip_text" translatable="yes">Timecode in hours:minutes:secondes</property>
-                        <property name="xpad">7</property>
-                        <property name="label" translatable="yes">000:00:00 / 000:00:00</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="relief">none</property>
+                        <property name="focus_on_click">False</property>
+                        <signal name="clicked" handler="on_timecode_pressed" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="frame_label">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_markup" translatable="yes">Timecode in frames</property>
-                        <property name="tooltip_text" translatable="yes">Timecode in frames</property>
-                        <property name="label" translatable="yes">0000000000 / 0000000000</property>
+                      <object class="GtkButton" id="frame_label">
+                        <property name="label" translatable="yes">0000000</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="relief">none</property>
+                        <property name="focus_on_click">False</property>
+                        <signal name="clicked" handler="on_timecode_pressed" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1135,6 +1251,42 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkButton" id="frame_total_label">
+                        <property name="label" translatable="yes">0000000</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="relief">none</property>
+                        <property name="focus_on_click">False</property>
+                        <signal name="clicked" handler="on_timecode_pressed" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="progress_total_label">
+                        <property name="label" translatable="yes">000:00:00</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="relief">none</property>
+                        <property name="focus_on_click">False</property>
+                        <signal name="clicked" handler="on_timecode_pressed" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1154,12 +1306,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_markup" translatable="yes">Play a media</property>
                         <property name="tooltip_text" translatable="yes">Play a media</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <signal name="clicked" handler="on_play_clicked" swapped="no"/>
@@ -1175,7 +1326,7 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -1185,12 +1336,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_markup" translatable="yes">Pause the playback</property>
                         <property name="tooltip_text" translatable="yes">Pause the playback</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_pause_clicked" swapped="no"/>
                         <child>
@@ -1215,10 +1365,9 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <child>
                           <object class="GtkImage" id="image27">
@@ -1243,12 +1392,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_markup" translatable="yes">Rewind the playback</property>
                         <property name="tooltip_text" translatable="yes">Rewind the playback</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_rewind_clicked" swapped="no"/>
                         <child>
@@ -1273,12 +1421,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_markup" translatable="yes">Stop the playback</property>
                         <property name="tooltip_text" translatable="yes">Stop the playback</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_stop_button_clicked" swapped="no"/>
                         <child>
@@ -1303,12 +1450,11 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_markup" translatable="yes">Forward the playback</property>
                         <property name="tooltip_text" translatable="yes">Forward the playback</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">3</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_forward_clicked" swapped="no"/>
                         <child>
@@ -1333,10 +1479,9 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <child>
                           <object class="GtkImage" id="image26">
@@ -1356,85 +1501,61 @@ EBU GUI Developer : Marco Dos Santos Oliveira</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="trackoption_show">
+                      <object class="GtkAspectFrame" id="aspectframe5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <property name="shadow_type">none</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkVolumeButton" id="volume_scale_button">
                         <property name="use_action_appearance">False</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_markup" translatable="yes">Open the essence track window</property>
-                        <property name="tooltip_text" translatable="yes">Open the essence track window</property>
-                        <property name="border_width">5</property>
-                        <property name="use_action_appearance">False</property>
-                        <child>
-                          <object class="GtkImage" id="image25">
-                            <property name="width_request">6</property>
-                            <property name="height_request">4</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-preferences</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">7</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="metadata_show">
-                        <property name="use_action_appearance">False</property>
-                        <property name="width_request">8</property>
-                        <property name="height_request">5</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_markup" translatable="yes">Open the metadata window</property>
-                        <property name="tooltip_text" translatable="yes">Open the metadata window</property>
-                        <property name="border_width">5</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_metadata_show_clicked" swapped="no"/>
-                        <child>
-                          <object class="GtkImage" id="image8">
-                            <property name="width_request">6</property>
-                            <property name="height_request">4</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">mail-attachment</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">8</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <object class="GtkVolumeButton" id="volumebutton1">
-                        <property name="use_action_appearance">False</property>
-                        <property name="width_request">8</property>
-                        <property name="height_request">5</property>
                         <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
                         <property name="has_tooltip">True</property>
                         <property name="use_action_appearance">False</property>
                         <property name="relief">none</property>
                         <property name="focus_on_click">False</property>
+                        <property name="size">invalid</property>
                         <property name="icons">audio-volume-muted
 audio-volume-high
 audio-volume-low
 audio-volume-medium</property>
                         <property name="use_symbolic">True</property>
+                        <signal name="button-release-event" handler="on_volume_scale_button_button_release_event" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="volume_scale">
+                        <property name="width_request">150</property>
+                        <property name="height_request">10</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="show_fill_level">True</property>
+                        <property name="restrict_to_fill_level">False</property>
+                        <property name="fill_level">80</property>
+                        <property name="round_digits">8</property>
+                        <property name="digits">5</property>
+                        <property name="draw_value">False</property>
+                        <signal name="value-changed" handler="on_volume_scale_value_changed" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1443,14 +1564,14 @@ audio-volume-medium</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScale" id="volume_scale">
-                        <property name="width_request">50</property>
-                        <property name="height_request">10</property>
+                      <object class="GtkAspectFrame" id="aspectframe6">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="show_fill_level">True</property>
-                        <property name="round_digits">1</property>
-                        <property name="draw_value">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <property name="shadow_type">none</property>
+                        <child>
+                          <placeholder/>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1459,107 +1580,21 @@ audio-volume-medium</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="playlist_show">
-                        <property name="use_action_appearance">False</property>
-                        <property name="width_request">8</property>
-                        <property name="height_request">5</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_markup" translatable="yes">Display the playlist window</property>
-                        <property name="tooltip_text" translatable="yes">Display the playlist window</property>
-                        <property name="border_width">5</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_show_playlist_clicked" swapped="no"/>
-                        <child>
-                          <object class="GtkImage" id="image11">
-                            <property name="width_request">6</property>
-                            <property name="height_request">4</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">format-justify-fill</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">13</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="loop">
-                        <property name="use_action_appearance">False</property>
-                        <property name="width_request">8</property>
-                        <property name="height_request">5</property>
-                        <property name="sensitive">False</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_markup" translatable="yes">Toggle the button to loop the playback</property>
-                        <property name="tooltip_text" translatable="yes">Toggle the button to loop the playback</property>
-                        <property name="border_width">5</property>
-                        <property name="use_action_appearance">False</property>
-                        <child>
-                          <object class="GtkImage" id="image10">
-                            <property name="width_request">6</property>
-                            <property name="height_request">4</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">media-playlist-repeat</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">14</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="shuffle">
-                        <property name="use_action_appearance">False</property>
-                        <property name="width_request">8</property>
-                        <property name="height_request">5</property>
-                        <property name="visible">True</property>
-                        <property name="sensitive">False</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="border_width">5</property>
-                        <property name="use_action_appearance">False</property>
-                        <child>
-                          <object class="GtkImage" id="image9">
-                            <property name="width_request">6</property>
-                            <property name="height_request">4</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_markup" translatable="yes">Toggle the button to shuffle playback playlist</property>
-                            <property name="tooltip_text" translatable="yes">Toggle the button to shuffle playback playlist</property>
-                            <property name="icon_name">media-playlist-shuffle</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">15</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkButton" id="unfullscreen">
                         <property name="use_action_appearance">False</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
-                        <property name="sensitive">False</property>
+                        <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <property name="relief">half</property>
                         <child>
                           <object class="GtkImage" id="image6">
                             <property name="width_request">6</property>
                             <property name="height_request">4</property>
+                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_markup" translatable="yes">Quit the full screen mode</property>
                             <property name="tooltip_text" translatable="yes">Quit the full screen mode</property>
@@ -1579,10 +1614,9 @@ audio-volume-medium</property>
                         <property name="width_request">8</property>
                         <property name="height_request">5</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="border_width">5</property>
+                        <property name="border_width">2</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_fullscreen_clicked" swapped="no"/>
                         <child>
@@ -1618,7 +1652,7 @@ audio-volume-medium</property>
               </packing>
             </child>
             <child>
-              <object class="GtkAspectFrame" id="aspectframe5">
+              <object class="GtkAspectFrame" id="borderright">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label_xalign">0</property>
@@ -1641,9 +1675,181 @@ audio-volume-medium</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="statusbox">
+          <object class="GtkBox" id="status_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <child>
+              <object class="GtkAspectFrame" id="aspectframe7">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="metadata_show">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Open the metadata window</property>
+                <property name="tooltip_text" translatable="yes">Open the metadata window</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="focus_on_click">False</property>
+                <signal name="clicked" handler="on_metadata_show_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image8">
+                    <property name="width_request">6</property>
+                    <property name="height_request">4</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">17</property>
+                    <property name="icon_name">mail-attachment</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="trackoption_show">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">8</property>
+                <property name="height_request">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Open the stream properties</property>
+                <property name="tooltip_text" translatable="yes">Open the stream properties</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="draw_indicator">True</property>
+                <signal name="clicked" handler="on_trackoption_show_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image25">
+                    <property name="width_request">6</property>
+                    <property name="height_request">4</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">17</property>
+                    <property name="icon_name">gtk-preferences</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="playlist_show">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">8</property>
+                <property name="height_request">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">Open the playlist window</property>
+                <property name="tooltip_text" translatable="yes">Open the playlist window</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_playlist_show_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image11">
+                    <property name="width_request">6</property>
+                    <property name="height_request">4</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">17</property>
+                    <property name="icon_name">format-justify-fill</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="loop">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">8</property>
+                <property name="height_request">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">When toggled, the playlist is played in loop</property>
+                <property name="tooltip_text" translatable="yes">When toggled, the playlist is played in loop</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="focus_on_click">False</property>
+                <signal name="clicked" handler="on_loop_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image10">
+                    <property name="width_request">6</property>
+                    <property name="height_request">4</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">17</property>
+                    <property name="icon_name">media-playlist-repeat</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="shuffle">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">8</property>
+                <property name="height_request">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_markup" translatable="yes">When toggled, the playlist is played randomly</property>
+                <property name="tooltip_text" translatable="yes">When toggled,  the playlist is played randomly</property>
+                <property name="border_width">2</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_shuffle_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image9">
+                    <property name="width_request">6</property>
+                    <property name="height_request">4</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">17</property>
+                    <property name="icon_name">media-playlist-shuffle</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkStatusbar" id="statusbar1">
                 <property name="visible">True</property>
@@ -1654,7 +1860,7 @@ audio-volume-medium</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">7</property>
               </packing>
             </child>
             <child>
@@ -1667,7 +1873,7 @@ audio-volume-medium</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">8</property>
               </packing>
             </child>
             <child>
@@ -1682,7 +1888,7 @@ audio-volume-medium</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">9</property>
               </packing>
             </child>
           </object>
@@ -1695,6 +1901,12 @@ audio-volume-medium</property>
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="image32">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="xalign">0.41999998688697815</property>
+    <property name="icon_name">insert-object</property>
+  </object>
   <object class="GtkListStore" id="playlistStore">
     <columns>
       <!-- column-name playlistname -->
@@ -1704,6 +1916,8 @@ audio-volume-medium</property>
       <!-- column-name playlistformat -->
       <column type="gchararray"/>
       <!-- column-name playlistdateofcreation -->
+      <column type="gchararray"/>
+      <!-- column-name playlistpathtofile -->
       <column type="gchararray"/>
     </columns>
   </object>

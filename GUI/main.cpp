@@ -19,7 +19,6 @@ This is the documentation of the EBU Player
  */
 
 #include "playerWindow.hpp"
-#include "metadataWindow.hpp"
 	/**
 	 * @fn int main (int argc, char *argv[])
    * @brief This function loads the player design (all windows design).
@@ -30,8 +29,8 @@ This is the documentation of the EBU Player
 	 * @note This function and his documentation must be completed
    */
 int main (int argc, char *argv[]) {
-	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-	//Gtk::Main app(argc, argv);
+	//Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+	Gtk::Main app(argc, argv);
   //Load the Glade file and instiate its widgets:
   Glib::RefPtr<Gtk::Builder> refBuilder = Gtk::Builder::create();
   try
@@ -54,16 +53,10 @@ int main (int argc, char *argv[]) {
     return 1;
   }
 
-	playerWindow* playerWindow;
-	refBuilder->get_widget_derived("PLAYER-EBU-MXF-ENCODER",playerWindow);
-	metadataWindow* metadataWindow;
-	refBuilder->get_widget_derived("METADATAVIEW-EBU-MXF-ENCODER",metadataWindow);
+	playerWindow* player;
+	refBuilder->get_widget_derived("PLAYER-EBU-MXF-ENCODER",player);
 
-if (/*metadataWindow){//*/playerWindow) { 
-	playerWindow->multipleWindows(metadataWindow);
-	app->run(*/*metadataWindow);//*/playerWindow);
-}
-	delete playerWindow;
-	delete metadataWindow;//*/playerWindow;
+	Gtk::Main::run( *player );
+	delete player;
   return 0;
 }
