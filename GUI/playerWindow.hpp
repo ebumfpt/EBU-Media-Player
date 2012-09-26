@@ -17,7 +17,14 @@
 #include <gtkmm-3.0/gtkmm/scalebutton.h>
 #include <gdkmm-3.0/gdkmm.h>
 #include <gstreamermm.h>
+#include <gdk/gdk.h>
+#if defined (GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
+#elif defined (GDK_WINDOWING_WIN32)
+#include <gdk/gdkwin32.h>
+#elif defined (GDK_WINDOWING_QUARTZ)
+#include <gdk/gdkquartz.h>
+#endif
 #include <iostream>
 #include <string.h>
 #include <iterator>

@@ -231,7 +231,16 @@ void playerWindow::on_videoDrawingArea_realize()
   // When the video area (the drawing area) is realized, Get its X Window
   // ID and save it for when the Gst::XOverlay is ready to accept an ID in
   // which to draw the video.
-  x_window_id = GDK_WINDOW_XID(videoDrawingArea->get_window()->gobj());
+
+#if defined (GDK_WINDOWING_WIN32)
+  x_window_id = (guintptr)GDK_WINDOW_HWND (videoDrawingArea->get_window()->gobj());
+#elif defined (GDK_WINDOWING_QUARTZ)
+  x_window_id = gdk_quartz_window_get_nsview (videoDrawingArea->get_window()->gobj());
+#elif defined (GDK_WINDOWING_X11)
+  x_window_id = GDK_WINDOW_XID (videoDrawingArea->get_window()->gobj());
+#endif
+
+//  x_window_id = GDK_WINDOW_XID(videoDrawingArea->get_window()->gobj());
 }
 
 // This function is used to receive asynchronous messages from mainPipeline's

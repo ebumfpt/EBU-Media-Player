@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classplayerWindow.html#a5cb5d308894234c6011a8055466aff47" title="playerWindow::on_openMenu\l_activate" alt="" coords="249,37,442,78"/>
-<area shape="rect" id="node9" href="$classplayerWindow.html#a6c7be1634361e4a1b946a169a7144bf4" title="playerWindow::on_quitMenu\l_activate" alt="" coords="252,102,439,143"/>
-<area shape="rect" id="node11" href="$classplayerWindow.html#afb41e24747e3d2a33fbb77648eb470e8" title="playerWindow::on_EBUCore\lMenu_activate" alt="" coords="251,167,440,209"/>
-<area shape="rect" id="node13" href="$classplayerWindow.html#ab6cbc10e5945ad7fd972dfa6f65ee3f5" title="playerWindow::on_metadata\lMenuItem_activate" alt="" coords="252,233,439,274"/>
-<area shape="rect" id="node15" href="$classplayerWindow.html#a7c5c0b571cab520af2bc281828365368" title="playerWindow::on_playlist\lMenuItem_activate" alt="" coords="258,298,433,339"/>
-<area shape="rect" id="node5" href="$classplayerWindow.html#ac7ad87343a718732497a5ba559f86e88" title="playerWindow::on_video\l_pad_got_buffer" alt="" coords="491,5,655,46"/>
-<area shape="rect" id="node7" href="$classplayerWindow.html#a0b4f67544949804ab52fe868bd8eef39" title="playerWindow::display\l_label_progress" alt="" coords="497,70,650,111"/>
-</map>

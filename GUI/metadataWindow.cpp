@@ -4,14 +4,15 @@
  * \brief EBUCore Metadata window
  * \authors Marco Dos Santos Oliveira
  * \version 0.1
- * \date 20 august 2012
- *
+ * \dateOfCreation 20 august 2012
+ * \dateOfUpdate 26 september 2012
  * This software is published in LGPLv3.0
  *
  */
 
-
+// include files and libraries
 #include "metadataWindow.hpp"
+
 void metadataWindow::refGladeWidgets(const Glib::RefPtr<Gtk::Builder>& refGlade) {
 	/* instantiate widgets for metadata window*/
 	refGlade->get_widget("expander1",Expander);
@@ -28,6 +29,7 @@ void metadataWindow::refGladeButton(const Glib::RefPtr<Gtk::Builder>& refGlade) 
 }
 
 void metadataWindow::connectSignalClicked(void) {
+	// Connect the button clicked signals
 	importXML->signal_clicked().connect(sigc::mem_fun(*this,
                       &metadataWindow::on_importXML_clicked));
 	exportXML->signal_clicked().connect(sigc::mem_fun(*this,
@@ -41,6 +43,7 @@ void metadataWindow::connectSignalClicked(void) {
 }
 
 
+// class constructor
 metadataWindow::metadataWindow(BaseObjectType* cobject, 
 	const Glib::RefPtr<Gtk::Builder>& refGlade)
 : Gtk::Window(cobject),
@@ -51,6 +54,7 @@ metadataWindow::metadataWindow(BaseObjectType* cobject,
 	connectSignalClicked(); // clicked buttons
 }
 
+// class destructor
 metadataWindow::~metadataWindow()
 {
 }
@@ -164,26 +168,38 @@ void metadataWindow::progress_cb(float progress, EBUCore::ProgressCallbackLevel 
 
 void metadataWindow::extractMetadata(std::string filename) {
 
+	// init bmx and xerces-c
 	bmx::connect_libmxf_logging();
-	//xercesc::XMLPlatformUtils::Initialize();
-	std::cout<<"chemin et nom du fichier mxf : "<<filename<<std::endl;
-	std::string output = Glib::get_current_dir ()+"/mxfmetadata.xml";
-	std::cout<< output<<std::endl;
-	EBUCore::ExtractEBUCoreMetadata(filename.c_str(), output.c_str(), &progress_cb);
-
+	// path to the temporary xml files
+	std::string xmltmp = Glib::get_current_dir ()+"/mxftmpmetadata.xml";
+	// remove the previous temporary xml file to
+	// avoid to reload some previous metadata
+	std::remove(xmltmp.c_str());
+	// prepare the viewport and the expander
+	// to receive a new bunch of metadatas
+	viewport1->remove();
+	Expander->remove();
+	// enable the html tag support
+	Expander->set_use_markup(true);
+	// extract the metadata from an mxf file
+	// and store it in a temporary xml file
+	// with the EBUSDK
+	EBUSDK::EBUCore::ExtractEBUCoreMetadata(filename.c_str(), xmltmp.c_str(), &progress_cb);
+	// init xerces-s and then parse
+	// the temporary XML file
 	xercesc::XMLPlatformUtils::Initialize();
 	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
 	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(output.c_str());
+	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(xmltmp.c_str());
 	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
-	viewport1->remove();
-	Expander->set_use_markup(true);
+	// set font color of the label expander
 	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
-	
+	// build the XML tree
 	recursiveConstructTreeView(dom_root, Expander,0);
-
+	// add the new expander to the viewport
 	viewport1->add(*Expander);
 }
+
 void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth) {
 	// create a new box to encapsulte the tree levels
 	Gtk::Box * root = manage(new Gtk::VBox());
@@ -232,72 +248,78 @@ void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::E
 }
 
 void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
-
+	// Initialize xerces-c to read an xml file
+	// and then parse it
 	xercesc::XMLPlatformUtils::Initialize();
 	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
 	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(XMLfile.c_str());
 	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
+	// refresh the viewport and the first expander
+	// to display properly the new bunch of metadata
 	viewport1->remove();
+	Expander->remove();	
+	// enable html tag support
 	Expander->set_use_markup(true);
+	// colorize the filename
 	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(XMLfile.c_str())+"</span>");
-	
+	// build the xml tree
 	recursiveConstructTreeView(dom_root, Expander,0);
-
+	// add the expander to the viewport
 	viewport1->add(*Expander);
 
 }
 
-bool metadataWindow::isMXF(std::string str) {
-	std::string mxf = "mxf";
-	// find last "."
+bool metadataWindow::isExtension(std::string str, std::string extension) {
+	// find last "." position in a string
 	int lastindex = str.find_last_of(".");
 	// copy what comes after last dot
-	 
 	std::string str2 = str.substr (lastindex+1,str.size()-(lastindex+1));
-//loop through each character and make it lower-case. stop when you hit '\0'.
+	//loop through each character and make it lower-case. stop when you hit '\0'.
 	for(int i = 0; str2[i] != '\0'; i++){
 		str2[i] = tolower(str2[i]);
 	}
-	
-  if (mxf.compare(str2) == 0) {
-		    return true;
-	} else {
-			return false;
-	}
+	// compare the file extension to the extension pattern
+  return (extension.compare(str2) == 0) ? true : false;
 }
+
 
 void metadataWindow::on_importXML_clicked(void)
 {
-	std::cout<<"import xml pressed"<<std::endl;
+	// get the local directory (application directory)
 	static Glib::ustring working_dir = Glib::get_home_dir();
-  
+  // define the file chooser action and features
   Gtk::FileChooserDialog chooser(*this,
     "Select a metatag file", Gtk::FILE_CHOOSER_ACTION_OPEN);
   chooser.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
   chooser.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
-  
+  // set the local directory as current directory
   chooser.set_current_folder(working_dir);
-  
+  // run the chooser
   const int response = chooser.run();
   if(response == Gtk::RESPONSE_OK)
   {
+		// get the selected directory by user
     working_dir = chooser.get_current_folder();
-
+		// set the filename as windows title
     set_title( Glib::filename_display_basename(chooser.get_filename()));
-		
-		
-		if (isMXF(Glib::filename_display_basename(chooser.get_filename()))){
-			std::cout<<"in the pocket"<<std::endl;
+		// verify the extension to choose
+		// the appropriate action 
+		if (isExtension(Glib::filename_display_basename(chooser.get_filename()), "mxf")){
+			// if it is an MXF file
+			extractMetadata(chooser.get_filename()); 
 		} else {
-			std::cout<<"not in the pocket"<<std::endl;
+			// if it is an XML file
+			if (isExtension(Glib::filename_display_basename(chooser.get_filename()), "xml")){
+				constructTreeView(chooser.get_filename());
+			} else {
+				// if it is a file format error then
+				// display an error alert
+				Gtk::MessageDialog dialog(*this, "File format error");
+				dialog.set_secondary_text("You can only open mxf or xml files.");
+				dialog.run();
+			}
 		}
-
-  //	std::string str =   Glib::filename_display_basename(chooser.get_filename());
-		
-	constructTreeView(chooser.get_filename());
-		//extractMetadata("/home/dossantos/Videos/withEBUCore.MXF");
-		
   }
 }
 
@@ -318,39 +340,41 @@ void metadataWindow::on_XMLconformance_clicked(void)
 }
 
 std::string metadataWindow::removeTags(std::string str) {
+	// current tags
 	int nbcurrenttags = 8;
 	std::string tags[] = {
 		"<b>","</b>","<span color='red'>",
 		"<span color='red'>","<span color='blue'>","</span>",
 		"<i>","</i>"
 	};
-
+	// temporary string
 	std::string replacement = "";	
 	std::string txt = str;
-
+	// update the string
 	for (int i=0;i<nbcurrenttags;i++){
 			boost::regex rx(tags[i]);
 			txt = boost::regex_replace(txt, rx, replacement);
 	}
-
 	return txt;
 }
 
 bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu) {
+	// detect when mouse right button is pressed
   if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) ) {
-
+		// launch the popup menu
 		Menu->popup(event->button, event->time);
-
-    return true; //It has been handled.
+		// signal has been handled.		
+    return true;
   }
+	// signal hasn't been handled.	
   return false;
 }
 
 void metadataWindow::on_openExpander_changed(Gtk::Expander * exp) {
-	if (previousnode != NULL) {
+	/*if (previousnode != NULL) {
 		previousnode->set_label("<b>"+removeTags(previousnode->get_label())+"</b>");
 	}
 	exp->set_label("<span color='red'>"+exp->get_label()+"</span>");
 	previousnode = exp;
-	
+	*/
 }
