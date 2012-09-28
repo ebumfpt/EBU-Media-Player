@@ -216,44 +216,6 @@ void metadataWindow::progress_cb(float progress, EBUCore::ProgressCallbackLevel 
 	free(newline_msg_format);
 }
 
-void metadataWindow::extractMetadata(std::string filename) {
-
-	// init bmx and xerces-c
-	bmx::connect_libmxf_logging();
-	// path to the temporary xml files
-	std::string xmltmp = Glib::get_current_dir ()+"/mxftmpmetadata.xml";
-	// remove the previous temporary xml file to
-	// avoid to reload some previous metadata
-	std::remove(xmltmp.c_str());
-	// prepare the viewport and the expander
-	// to receive a new bunch of metadatas
-	viewport1->remove();
-	Expander->remove();
-	// enable the html tag support
-	Expander->set_use_markup(true);
-	// extract the metadata from an mxf file
-	// and store it in a temporary xml file
-	// with the EBUSDK
-	EBUSDK::EBUCore::ExtractEBUCoreMetadata(filename.c_str(), xmltmp.c_str(), &progress_cb);
-	// init xerces-s and then parse
-	// the temporary XML file
-	xercesc::XMLPlatformUtils::Initialize();
-	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
-	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(xmltmp.c_str());
-	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
-	// set font color of the label expander
-	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
-	// build the XML tree
-	recursiveConstructTreeView(dom_root, Expander,0);
-	// add the new expander to the viewport
-	viewport1->add(*Expander);
-	// activate the metadata window buttons after loading
-	metadataLoaded();
-	//write metadata buffer
-	writeMetadataBuffer(xmltmp.c_str());
-}
-
 void metadataWindow::writeMetadataBuffer(std::string filename) {
 	// open
 	std::ifstream file(filename);
@@ -310,6 +272,60 @@ void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::E
 	root->show();
 }
 
+
+void metadataWindow::recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> & Entries) {
+	
+	// create a new box to encapsulte the tree levels
+	Gtk::Box * root = manage(new Gtk::VBox());
+	// configure the new box
+	configureEncapsultedBox(root);
+	do {
+		Gtk::Entry * editableEntry = manage(new Gtk::Entry());
+		editableEntry->set_text(xercesc::XMLString::transcode(el->getTagName()));
+		editableEntry->show();
+		root->add(*editableEntry);
+		Entries.push_back(editableEntry);
+		if (el->hasChildNodes()) {
+			// create a new expander to store the node children
+			Gtk::Expander * node = manage( new Gtk::Expander(xercesc::XMLString::transcode(el->getTagName())) );
+			// configure the new expander
+			configureExpander(node);
+			// visit the first children of the current node
+			if (el->getChildElementCount() != 0) {
+				recursiveConstructEditableTreeView(el->getFirstElementChild(), node ,depth+1,Entries);
+			// if the node hasn't children then create a text box
+			} else {
+				// if it's a text node
+				if (el->getFirstChild() != 0) {
+					createExpanderTextBox(node, root, xercesc::XMLString::transcode(el->getTextContent()));
+				}
+			}
+			// generate the popup menu with the attributes
+			createAttributesPopup(el->getAttributes(),node);
+			// end encapsultation level
+			finishEncapsulation(root,node);
+		} else {
+			Gtk::EventBox *eventLabel = manage(new Gtk::EventBox);
+			// create a new label to store the node children
+			Gtk::Label * label = manage( new Gtk::Label(xercesc::XMLString::transcode(el->getTagName())) );
+			/// configure the new label
+			configureLabel(label);
+			/// configure the new eventbox and encapsulate the label
+			configureEventLabel(eventLabel,label);
+			// generate the popup menu with the attributes
+			createAttributesPopup(el->getAttributes(),eventLabel);
+			// end encapsultation level
+			finishEncapsulation(root,eventLabel);
+		}
+		// next node at this level
+		el = el->getNextElementSibling();
+	} while (el != 0);
+	// add and show...
+	seed->add(*root);
+	root->show();
+}
+
+
 void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	// Initialize xerces-c to read an xml file
 	// and then parse it
@@ -320,19 +336,66 @@ void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
 	// refresh the viewport and the first expander
 	// to display properly the new bunch of metadata
-	viewport1->remove();
-	Expander->remove();	
+	viewport1->remove(); viewport2->remove();
+	Expander->remove();	Expander2->remove();
 	// enable html tag support
 	Expander->set_use_markup(true);
+	Expander2->set_use_markup(true);
 	// colorize the filename
 	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(XMLfile.c_str())+"</span>");
+	Expander2->set_label("<span color='blue'>"+Glib::filename_display_basename(XMLfile.c_str())+"</span>");
 	// build the xml tree
 	recursiveConstructTreeView(dom_root, Expander,0);
+	recursiveConstructEditableTreeView(dom_root,Expander2,0, xmlEntries);
 	// add the expander to the viewport
 	viewport1->add(*Expander);
+	viewport1->add(*Expander2);
 	//write metadata buffer
 	writeMetadataBuffer(XMLfile.c_str());
 }
+
+void metadataWindow::extractMetadata(std::string filename) {
+
+	// init bmx and xerces-c
+	bmx::connect_libmxf_logging();
+	// path to the temporary xml files
+	std::string xmltmp = Glib::get_current_dir ()+"/mxftmpmetadata.xml";
+	// remove the previous temporary xml file to
+	// avoid to reload some previous metadata
+	std::remove(xmltmp.c_str());
+	// prepare the viewport and the expander
+	// to receive a new bunch of metadatas
+	viewport1->remove(); viewport2->remove();
+	Expander->remove(); Expander2->remove();
+	// enable the html tag support
+	Expander->set_use_markup(true);
+	Expander2->set_use_markup(true);
+	// extract the metadata from an mxf file
+	// and store it in a temporary xml file
+	// with the EBUSDK
+	EBUSDK::EBUCore::ExtractEBUCoreMetadata(filename.c_str(), xmltmp.c_str(), &progress_cb);
+	// init xerces-s and then parse
+	// the temporary XML file
+	xercesc::XMLPlatformUtils::Initialize();
+	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
+	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(xmltmp.c_str());
+	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
+	// set font color of the label expander
+	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
+	Expander2->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
+	// build the XML tree
+	recursiveConstructTreeView(dom_root, Expander,0);
+	recursiveConstructEditableTreeView(dom_root, Expander2,0,xmlEntries);
+	// add the new expander to the viewport
+	viewport1->add(*Expander);
+	viewport2->add(*Expander2);
+	// activate the metadata window buttons after loading
+	metadataLoaded();
+	//write metadata buffer
+	writeMetadataBuffer(xmltmp.c_str());
+}
+
 
 bool metadataWindow::isExtension(std::string str, std::string extension) {
 	// find last "." position in a string
@@ -469,6 +532,10 @@ bool metadataWindow::on_leave_label(GdkEventCrossing*, Gtk::EventBox *evLabel) {
 	// set the event box background color as white
 	Gdk::RGBA white("FFFFFF");
 	evLabel->override_background_color (white, Gtk::STATE_FLAG_NORMAL);
+	std::cout<<xmlEntries.size()<<std::endl;
+	//for (unsigned int i=0;i<xmlEntries->size();i++) {
+			//std::cout<<xmlEntries->at(i)->get_text().c_str()<<std::endl;
+	//}
 	return true;
 
 }

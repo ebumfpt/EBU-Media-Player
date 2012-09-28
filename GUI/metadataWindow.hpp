@@ -175,6 +175,18 @@ protected:
    */
 	void recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth);
 	/**
+	 * @fn void recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> Entries)
+   * @brief walk through the XML tree and create the encapsulted editable gtk expander
+   * @brief 
+	 * @note needs more documentation
+	 * @param[in] el : xercesc::DOMElement *
+	 * @param[in] seed : Gtk::Expander *
+	 * @param[in] depth : int
+	 * @param[in] entries : std::vector to store the gtk::entry objects
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> & Entries);
+	/**
 	 * @fn void constructTreeView(Glib::ustring XMLfile)
    * @brief contruct and display a simili treeview compound of encapsulated gtk expander
    * @brief 
@@ -417,6 +429,10 @@ protected:
   
 	std::string xmlViewportFirst;
 	std::string xmlViewportSecond;
+
+
+	std::vector<Gtk::Entry *> xmlEntries;
+
 };
 
 #endif
