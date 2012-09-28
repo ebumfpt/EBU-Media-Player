@@ -299,7 +299,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow3">
+              <object class="GtkScrolledWindow" id="SecondScrolledWindow">
                 <property name="width_request">250</property>
                 <property name="can_focus">True</property>
                 <property name="vexpand">True</property>
@@ -1867,6 +1867,7 @@ audio-volume-medium</property>
               <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
                 <property name="label" translatable="yes">powered by </property>
                 <property name="justify">right</property>
               </object>

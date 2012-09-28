@@ -20,6 +20,8 @@
 #include <boost/regex.hpp>
 #include <stdexcept>
 
+#include <fstream>
+
 #include <bmx/mxf_reader/MXFFileReader.h>
 #include <bmx/mxf_reader/MXFGroupReader.h>
 #include <bmx/mxf_reader/MXFSequenceReader.h>
@@ -258,6 +260,26 @@ protected:
    */
 	virtual bool on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu);
 	/**
+	 * @fn virtual bool on_enter_label(GdkEventCrossing*, Gtk::EventBox *evLabel)
+   * @brief This callback runs when the mouse enters inside the label area
+   * @brief This callback will change the label background color to simulate the hover effect
+	 * @note needs more documentation
+	 * @param[in] event : GdkEvent -> enter_notify
+	 * @param[in] evLabel : Gtk::EventBox where is stored the autoclosed tag
+   * @return a bool if all is right or an error at compilation time.
+   */
+	virtual bool on_enter_label(GdkEventCrossing*, Gtk::EventBox *evLabel); 
+	/**
+	 * @fn virtual bool on_leave_label(GdkEventCrossing*, Gtk::EventBox *evLabel)
+   * @brief This callback runs when the mouse leaves the label area
+   * @brief This callback will change the label background color to simulate the hover effect
+	 * @note needs more documentation
+	 * @param[in] event : GdkEvent -> leave_notify
+	 * @param[in] evLabel : Gtk::EventBox where is stored the autoclosed tag
+   * @return a bool if all is right or an error at compilation time.
+   */
+	virtual bool on_leave_label(GdkEventCrossing*, Gtk::EventBox *evLabel); 
+	/**
 	 * @fn void configureEncapsultedBox(Gtk::Box * b)
    * @brief Configure the Gtk Box encapsulated in the Gtk Expander
    * @brief this function makes the configuration of the Gtk Box encapsulated in the Gtk Expander
@@ -275,6 +297,25 @@ protected:
    * @return nothing if all is right or an error at compilation time.
    */
 	void configureExpander(Gtk::Expander * e);
+	/**
+	 * @fn void configureEventLabel(Gtk::EventBox * evLabel, Gtk::Label * label)
+   * @brief Configure the Gtk Expander
+   * @brief this function makes the configuration of the Gtk Expander encapsulated where will be encapsulated a Gtk Box.
+	 * @note needs more documentation
+	 * @param[in] evLabel :  Pointer to a Gtk EventBox
+	 * @param[in] label :  Pointer to a Gtk Label
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void configureEventLabel(Gtk::EventBox * evLabel, Gtk::Label * label);
+	/**
+	 * @fn void configureLabel(Gtk::Label * l)
+   * @brief Configure the Gtk label where the autoclosed tag is stored
+   * @brief this function makes the configuration of the Gtk label.
+	 * @note needs more documentation
+	 * @param[in] l :  Pointer to a Gtk label
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void configureLabel(Gtk::Label * l);
 	/**
 	 * @fn void createExpanderTextBox(Gtk::Expander * ed, Gtk::Box *bd, std::string txt)
    * @brief Create a text box in a Gtk Expander to display node text
@@ -297,6 +338,16 @@ protected:
    */
 	void finishEncapsulation(Gtk::Box * root, Gtk::Expander * node);	
 	/**
+	 * @fn void finishEncapsulation(Gtk::Box * root, Gtk::EventBox * evLabel)
+   * @brief Finish the encapsultation of labels and boxes.
+   * @brief 
+	 * @note needs more documentation
+	 * @param[in] root : Pointer to the destination Gtk Box
+	 * @param[in] evLabel : Pointer to the event box attach  Gtk Label
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void finishEncapsulation(Gtk::Box * root, Gtk::EventBox * evLabel);
+	/**
 	 * @fn void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node)
    * @brief To create the attributes popup attached to an Gtk Expander
    * @brief 
@@ -305,7 +356,17 @@ protected:
 	 * @param[in] node : Pointer to the destination Gtk Expander
    * @return nothing if all is right or an error at compilation time.
    */
-	void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node);	
+	void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node);
+	/**
+	 * @fn void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::EventBox * evLabel)
+   * @brief To create the attributes popup attached to an Gtk Label
+   * @brief 
+	 * @note needs more documentation
+	 * @param[in] dom_attrs : Pointer to a collection of node's attributes
+	 * @param[in] label : Pointer to the destination Gtk Label
+   * @return nothing if all is right or an error at compilation time.
+   */	
+	void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::EventBox * evLabel);
 	/**
 	 * @fn bool isExtension(std::string str, std::string extension)
    * @brief To verify if a filename contains a file extension in perticular
@@ -316,6 +377,23 @@ protected:
    * @return a bool if all is right or an error at compilation time.
    */
 	bool isExtension(std::string str, std::string extension);
+	/**
+	 * @fn void metadataLoaded(void)
+   * @brief To activate metadata window buttons when metadata are loaded
+   * @brief 
+	 * @note needs more documentation
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void metadataLoaded(void);
+	/**
+	 * @fn void writeMetadataBuffer(std::string filename)
+   * @brief To write the xml file into a temporary buffer
+   * @brief 
+	 * @param[in] filename : string - It's mandatory.
+	 * @note needs more documentation
+   * @return nothing if all is right or an error at compilation time.
+   */
+	void writeMetadataBuffer(std::string filename);
 
 	// Glade reference
   Glib::RefPtr<Gtk::Builder> m_refGlade; /*!< Glade references */
@@ -329,10 +407,16 @@ protected:
   Gtk::Button* XMLconformance; /*!< EBUcore conformance button */
 	Gtk::Viewport* viewport1; /*!< viewport1 the Gtk Viewport where is stored the expander */
 	Gtk::Expander * Expander; /*!< Expander the Gtk Expander is the EBUCore Metadata xml tree root */
+	Gtk::Viewport* viewport2; /*!< viewport2 the Gtk Viewport where is stored the second expander */
+	Gtk::Expander * Expander2; /*!< Expander2 the Gtk Expander is the second EBUCore Metadata xml tree root */
+	Gtk::ScrolledWindow * SecondScrolledWindow; /*!< Expander2 the Gtk Expander is the second EBUCore Metadata xml tree root */
 	
 	Gtk::Expander * previousnode; /*!< previousnode Pointer to store temporarly the current node selected */
 	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
 	xercesc::DOMDocument * metadata; /*!< metadata Pointer to xerces-c containing the XML metadata */
+  
+	std::string xmlViewportFirst;
+	std::string xmlViewportSecond;
 };
 
 #endif
