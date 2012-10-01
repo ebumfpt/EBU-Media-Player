@@ -78,7 +78,6 @@ void metadataWindow::configureEncapsultedBox(Gtk::Box * b) {
 void metadataWindow::configureExpander(Gtk::Expander * e) {
 		// signal handler to detect what expander has been expanded
 	e->property_expanded().signal_changed().connect(sigc::bind<Gtk::Expander *>(sigc::mem_fun(*this, &metadataWindow::on_openExpander_changed), e));
-	// define the margin left
 	e->set_margin_left(0);
 	// use the pango markup language
 	e->set_use_markup(true);
@@ -97,8 +96,6 @@ void metadataWindow::configureEventLabel(Gtk::EventBox * evLabel, Gtk::Label * l
 			Gdk::RGBA white("FFFFFF");
 			evLabel->override_background_color (white, Gtk::STATE_FLAG_NORMAL);
 }
-
-
 
 // configure the gtk label before to encapsulate it into a Gtk::Box
 void metadataWindow::configureLabel(Gtk::Label * l) {
@@ -338,6 +335,7 @@ void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	// to display properly the new bunch of metadata
 	viewport1->remove(); viewport2->remove();
 	Expander->remove();	Expander2->remove();
+	previousnode = manage(new Gtk::Expander("!###ImAnEmptyExpander###!"));
 	// enable html tag support
 	Expander->set_use_markup(true);
 	Expander2->set_use_markup(true);
@@ -370,6 +368,7 @@ void metadataWindow::extractMetadata(std::string filename) {
 	// enable the html tag support
 	Expander->set_use_markup(true);
 	Expander2->set_use_markup(true);
+	previousnode = manage(new Gtk::Expander("!###ImAnEmptyExpander###!"));
 	// extract the metadata from an mxf file
 	// and store it in a temporary xml file
 	// with the EBUSDK
@@ -550,10 +549,10 @@ void metadataWindow::metadataLoaded(void) {
 }
 
 void metadataWindow::on_openExpander_changed(Gtk::Expander * exp) {
-	/*if (previousnode) {
-		previousnode->set_state(Gtk::STATE_NORMAL );
+	// update the previous textual breadcrumb if required
+	if (previousnode->get_label() != "!###ImAnEmptyExpander###!") {
+		previousnode->set_label("<b>"+removeTags(previousnode->get_label())+"</b>");
 	}
-	exp->set_state(Gtk::STATE_ACTIVE  );
+	exp->set_label("<span color='red'><b>"+removeTags(exp->get_label())+"</b></span>");
 	previousnode = exp;
-	*/
 }

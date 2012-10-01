@@ -241,11 +241,11 @@ protected:
    */
 	void on_XMLconformance_clicked(void);
 	/**
-	 * @fn virtual void on_openExpander_changed(Gtk::Expander * exp))
+	 * @fn virtual void on_openExpander_changed(Gtk::Expander * exp)
    * @brief 
    * @brief 
 	 * @note needs more documentation
-	 * @param[in] void : no params
+	 * @param[in] exp : the Gtk::Expander who is expanded/closed
    * @return nothing if all is right or an error at compilation time.
    */
 	virtual void on_openExpander_changed(Gtk::Expander * exp);
@@ -255,7 +255,7 @@ protected:
    * @brief 
 	 * @note needs more documentation
 	 * @param[in] str : a standard string 
-   * @return nothing if all is right or an error at compilation time.
+   * @return a bool if all is right or an error at compilation time.
    */
 	std::string removeTags(std::string str);
 	/**
