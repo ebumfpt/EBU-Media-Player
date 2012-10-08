@@ -249,6 +249,7 @@ void playerWindow::on_videoDrawingArea_realize()
 void playerWindow::on_bus_message_sync(
     const Glib::RefPtr<Gst::Message>& message)
 {
+	std::cout << "debug: on_bus_message: unhandled message=" << G_OBJECT_TYPE_NAME(message->gobj()) << std::endl<<"message type is : "<<message->get_message_type()<<std::endl;
   // ignore anything but 'prepare-xwindow-id' element messages
   if(message->get_message_type() != Gst::MESSAGE_ELEMENT)
     return;
@@ -328,7 +329,7 @@ bool playerWindow::on_bus_message(const Glib::RefPtr<Gst::Bus>& /* bus */,
     }
     default:
     {
-      //std::cout << "debug: on_bus_message: unhandled message=" << G_OBJECT_TYPE_NAME(message->gobj()) << std::endl;
+     // std::cout << "debug: on_bus_message: unhandled message=" << G_OBJECT_TYPE_NAME(message->gobj()) << std::endl<<"message type is : "<<message->get_message_type()<<std::endl;
     }
   }
 

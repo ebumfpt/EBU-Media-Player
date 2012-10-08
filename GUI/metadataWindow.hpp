@@ -20,6 +20,7 @@
 #include <boost/regex.hpp>
 #include <stdexcept>
 
+
 #include <fstream>
 
 #include <bmx/mxf_reader/MXFFileReader.h>
@@ -164,28 +165,17 @@ protected:
    */
 	void connectSignalClicked(void);
 	/**
-	 * @fn void recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed,  int depth)
+	 * @fn void recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed,  int depth, int countbox)
    * @brief walk through the XML tree and create the encapsulted gtk expander
    * @brief 
 	 * @note needs more documentation
 	 * @param[in] el : xercesc::DOMElement *
 	 * @param[in] seed : Gtk::Expander *
 	 * @param[in] depth : int
+	 * @param[in] idbox : box id
    * @return nothing if all is right or an error at compilation time.
    */
-	void recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth);
-	/**
-	 * @fn void recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> Entries)
-   * @brief walk through the XML tree and create the encapsulted editable gtk expander
-   * @brief 
-	 * @note needs more documentation
-	 * @param[in] el : xercesc::DOMElement *
-	 * @param[in] seed : Gtk::Expander *
-	 * @param[in] depth : int
-	 * @param[in] entries : std::vector to store the gtk::entry objects
-   * @return nothing if all is right or an error at compilation time.
-   */
-	void recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> & Entries);
+	void recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, int idbox);
 	/**
 	 * @fn void constructTreeView(Glib::ustring XMLfile)
    * @brief contruct and display a simili treeview compound of encapsulated gtk expander
@@ -259,19 +249,6 @@ protected:
    */
 	std::string removeTags(std::string str);
 	/**
-	 * @fn void on_extanderpressed_pressed(GdkEventButton* event,
-																		std::vector<std::string> name, 
-																		std::vector<std::string> value)
-   * @brief callback when the extander is pressed
-   * @brief display the attributes of EBUCore tag
-	 * @note needs more documentation
-	 * @param[in] event : 
-	 * @param[in] name :  std::vector<std::string> contains attribue name
-	 * @param[in] value :  std::vector<std::string> contains attributes value
-   * @return nothing if all is right or an error at compilation time.
-   */
-	virtual bool on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu);
-	/**
 	 * @fn virtual bool on_enter_label(GdkEventCrossing*, Gtk::EventBox *evLabel)
    * @brief This callback runs when the mouse enters inside the label area
    * @brief This callback will change the label background color to simulate the hover effect
@@ -291,6 +268,16 @@ protected:
    * @return a bool if all is right or an error at compilation time.
    */
 	virtual bool on_leave_label(GdkEventCrossing*, Gtk::EventBox *evLabel); 
+	/**
+	 * @fn virtual bool on_press_label(GdkEventButton* event, Gtk::EventBox *evLabel)
+   * @brief This callback runs when the mouse leaves the label area
+   * @brief This callback will change the label background color to simulate the hover effect
+	 * @note needs more documentation
+	 * @param[in] event : GdkEvent -> button_press
+	 * @param[in] evLabel : Gtk::EventBox where is stored the autoclosed tag
+   * @return a bool if all is right or an error at compilation time.
+   */
+	virtual bool on_press_label(GdkEventButton* event, Gtk::EventBox *evLabel, Gtk::Label * txtLabel);
 	/**
 	 * @fn void configureEncapsultedBox(Gtk::Box * b)
    * @brief Configure the Gtk Box encapsulated in the Gtk Expander
@@ -329,17 +316,6 @@ protected:
    */
 	void configureLabel(Gtk::Label * l);
 	/**
-	 * @fn void createExpanderTextBox(Gtk::Expander * ed, Gtk::Box *bd, std::string txt)
-   * @brief Create a text box in a Gtk Expander to display node text
-   * @brief 
-	 * @note needs more documentation
-	 * @param[in] ed : Pointer to the destination Gtk Expander
-	 * @param[in] bd :  Pointer to the destination Gtk Box
-	 * @param[in] txt : This string contains the node text value
-   * @return nothing if all is right or an error at compilation time.
-   */
-	void createExpanderTextBox(Gtk::Expander * ed, Gtk::Box *bd, std::string txt);	
-	/**
 	 * @fn void finishEncapsulation(Gtk::Box * root, Gtk::Expander * node)
    * @brief Finish the encapsultation of expanders and boxes.
    * @brief 
@@ -359,26 +335,6 @@ protected:
    * @return nothing if all is right or an error at compilation time.
    */
 	void finishEncapsulation(Gtk::Box * root, Gtk::EventBox * evLabel);
-	/**
-	 * @fn void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node)
-   * @brief To create the attributes popup attached to an Gtk Expander
-   * @brief 
-	 * @note needs more documentation
-	 * @param[in] dom_attrs : Pointer to a collection of node's attributes
-	 * @param[in] node : Pointer to the destination Gtk Expander
-   * @return nothing if all is right or an error at compilation time.
-   */
-	void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node);
-	/**
-	 * @fn void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::EventBox * evLabel)
-   * @brief To create the attributes popup attached to an Gtk Label
-   * @brief 
-	 * @note needs more documentation
-	 * @param[in] dom_attrs : Pointer to a collection of node's attributes
-	 * @param[in] label : Pointer to the destination Gtk Label
-   * @return nothing if all is right or an error at compilation time.
-   */	
-	void createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::EventBox * evLabel);
 	/**
 	 * @fn bool isExtension(std::string str, std::string extension)
    * @brief To verify if a filename contains a file extension in perticular
@@ -407,6 +363,49 @@ protected:
    */
 	void writeMetadataBuffer(std::string filename);
 
+void configureNodeAttributesTreeview(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Box * nodebox);
+void configureNodeChildrenTreeview(xercesc::DOMElement * children, Gtk::Box * nodebox);
+void constructEditableNode(xercesc::DOMElement * el);
+void configureNodeText(std::string nodetext, Gtk::Box * nodebox);
+void defineColors(void);
+
+  //Node attributes Tree model columns:
+  class NodeAttributesModelColumns : public Gtk::TreeModel::ColumnRecord
+  {
+  public:
+
+    NodeAttributesModelColumns() { 
+			add(metadataNodeAttributeIdCol);
+			add(metadataNodeAttributeNameCol); 
+			add(metadataNodeAttributeValueCol);
+			add(metadataNodeAttributeBgColorCol);
+		}
+
+    Gtk::TreeModelColumn<int> metadataNodeAttributeIdCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeNameCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeValueCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeBgColorCol;
+
+  };
+
+  //Node attributes Tree model columns:
+  class NodeChildrenModelColumns : public Gtk::TreeModel::ColumnRecord
+  {
+  public:
+
+    NodeChildrenModelColumns() { 
+			add(metadataNodeChildrenIdCol);
+			add(metadataNodeChildrenNameCol);
+			add(metadataNodeChildrenBgColorCol);
+		}
+
+    Gtk::TreeModelColumn<int> metadataNodeChildrenIdCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeChildrenNameCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeChildrenBgColorCol;
+
+  };
+
+
 	// Glade reference
   Glib::RefPtr<Gtk::Builder> m_refGlade; /*!< Glade references */
 	// Gtk Box
@@ -420,18 +419,36 @@ protected:
 	Gtk::Viewport* viewport1; /*!< viewport1 the Gtk Viewport where is stored the expander */
 	Gtk::Expander * Expander; /*!< Expander the Gtk Expander is the EBUCore Metadata xml tree root */
 	Gtk::Viewport* viewport2; /*!< viewport2 the Gtk Viewport where is stored the second expander */
-	Gtk::Expander * Expander2; /*!< Expander2 the Gtk Expander is the second EBUCore Metadata xml tree root */
+	Gtk::ScrolledWindow * FirstScrolledWindow; /*!< Expander2 the Gtk Expander is the first EBUCore Metadata xml tree root */
 	Gtk::ScrolledWindow * SecondScrolledWindow; /*!< Expander2 the Gtk Expander is the second EBUCore Metadata xml tree root */
 	
 	Gtk::Expander * previousnode; /*!< previousnode Pointer to store temporarly the current node selected */
+	Gtk::EventBox * previousnnodeevent; /*!< previousnode Pointer to store temporarly the current node selected */
+	Gtk::Label * previousnodelabel; /*!< previousnode Pointer to store temporarly the current node selected */
 	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
 	xercesc::DOMDocument * metadata; /*!< metadata Pointer to xerces-c containing the XML metadata */
   
 	std::string xmlViewportFirst;
 	std::string xmlViewportSecond;
 
+ 	Gtk::Box * boxEntries;
+	std::vector<xercesc::DOMElement *> elReferences;
+ 	Glib::RefPtr<Gtk::TextBuffer> metadataTextBuffer;
 
-	std::vector<Gtk::Entry *> xmlEntries;
+	bool previouslabel;
+	int cptnode, previousnodepos;
+
+	unsigned int viewport1minimumwidth;
+
+	int position_x;
+	int position_y;
+
+	Gdk::RGBA black;
+	Gdk::RGBA white;
+	Gdk::RGBA red;
+	Gdk::RGBA blue;
+
+	enum metadataStates {ORIGINAL, MODIFIED, CREATE, DELETE};
 
 };
 

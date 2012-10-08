@@ -17,7 +17,6 @@ void metadataWindow::refGladeWidgets(const Glib::RefPtr<Gtk::Builder>& refGlade)
 	/* instantiate widgets for metadata window*/
 	refGlade->get_widget("expander1",Expander);
 	refGlade->get_widget("viewport1",viewport1);
-	refGlade->get_widget("expander2",Expander2);
 	refGlade->get_widget("viewport2",viewport2);
 	refGlade->get_widget("SecondScrolledWindow",SecondScrolledWindow);
 }
@@ -45,6 +44,13 @@ void metadataWindow::connectSignalClicked(void) {
                       &metadataWindow::on_XMLconformance_clicked));
 }
 
+void metadataWindow::defineColors(void) {
+	black.set("black");
+	white.set("white");
+	red.set("red");
+	blue.set("blue");
+}
+
 
 // class constructor
 metadataWindow::metadataWindow(BaseObjectType* cobject, 
@@ -55,6 +61,8 @@ metadataWindow::metadataWindow(BaseObjectType* cobject,
 	refGladeButton(refGlade); // " " " " buttons
 	refGladeWidgets(refGlade);// " " " " widgets
 	connectSignalClicked(); // clicked buttons
+	defineColors();
+	set_has_resize_grip();
 }
 
 // class destructor
@@ -64,7 +72,200 @@ metadataWindow::~metadataWindow()
 
 void metadataWindow::setWindowsPosition(int x, int y) {
 	move(x,y);
+	position_x = x;
+	position_y = y;
 }
+
+void metadataWindow::configureNodeAttributesTreeview(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Box * nodebox) {
+
+	Gtk::Box * AttributesTreeviewBox = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+
+	AttributesTreeviewBox->set_size_request(120, 150);
+
+	NodeAttributesModelColumns metadataNodeAttributesColumns;
+
+	Gtk::ScrolledWindow * metadataNodeAttributesScrolledWindow = manage(new Gtk::ScrolledWindow());
+	metadataNodeAttributesScrolledWindow->set_size_request(120, 150);
+
+	Gtk::TreeView * metadataNodeAttributesTreeview = manage(new Gtk::TreeView());
+
+//Add the TreeView, inside a ScrolledWindow, with the button underneath:
+  metadataNodeAttributesScrolledWindow->add(*metadataNodeAttributesTreeview);
+
+  //Only show the scrollbars when they are necessary:
+  metadataNodeAttributesScrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+	Glib::RefPtr<Gtk::ListStore> metadataNodeAttributesStore;
+  Glib::RefPtr<Gtk::TreeSelection> metadataNodeAttributesTreeviewSelection;
+
+	// create the data model
+	metadataNodeAttributesStore = Gtk::ListStore::create(metadataNodeAttributesColumns);
+	// set the data model
+  metadataNodeAttributesTreeview->set_model(metadataNodeAttributesStore);
+	//Add the TreeView's view columns
+  metadataNodeAttributesTreeview->append_column("", metadataNodeAttributesColumns.metadataNodeAttributeIdCol);
+  metadataNodeAttributesTreeview->append_column("Attribute name", metadataNodeAttributesColumns.metadataNodeAttributeNameCol);
+  metadataNodeAttributesTreeview->append_column("Attribute value", metadataNodeAttributesColumns.metadataNodeAttributeValueCol);
+  metadataNodeAttributesTreeview->append_column("bgcolor", metadataNodeAttributesColumns.metadataNodeAttributeBgColorCol);
+
+	Gtk::TreeView::Column* pColumn;
+	for(guint i = 1; i < 3; i++)
+  { 
+		pColumn = metadataNodeAttributesTreeview->get_column(i);
+		Gtk::CellRenderer* cellRenderer = metadataNodeAttributesTreeview->get_column_cell_renderer(i);
+		pColumn->add_attribute(cellRenderer->property_cell_background(), metadataNodeAttributesColumns.metadataNodeAttributeBgColorCol);
+    pColumn->set_reorderable();
+		switch(i) {
+			case 1 : pColumn->set_sort_column(metadataNodeAttributesColumns.metadataNodeAttributeNameCol); break;
+			case 2 : pColumn->set_sort_column(metadataNodeAttributesColumns.metadataNodeAttributeValueCol); break;
+		}
+  }
+	pColumn = metadataNodeAttributesTreeview->get_column(3);
+	pColumn->set_visible(false);
+	//All the items to be reordered with drag-and-drop
+	// Set the visibility state of the headers. 
+	metadataNodeAttributesTreeview->set_headers_visible(true);
+	// Allow the column title buttons to be clicked
+	metadataNodeAttributesTreeview->set_headers_clickable(true);
+	// Resize all columns to their optimal width. 
+	metadataNodeAttributesTreeview->columns_autosize();
+	// all element are reordorable
+	metadataNodeAttributesTreeview->set_reorderable();
+  metadataNodeAttributesTreeview->set_rules_hint();
+	// grab the treeview selection
+	metadataNodeAttributesTreeviewSelection = metadataNodeAttributesTreeview->get_selection();
+	// connect signal to dectect when tree selection change
+	//metadataNodeAttributesTreeview->signal_button_press_event().connect(sigc::mem_fun(*this,
+  //            &metadataWindow::on_metadata_selection_changed),false);
+
+
+	int num= dom_attrs->getLength();
+	if (num != 0) {
+		for(int i=0; i<num;i++) {
+			Gtk::TreeModel::Row row = *(metadataNodeAttributesStore->prepend());
+			xercesc::DOMAttr* dom_attr = (xercesc::DOMAttr*) dom_attrs->item(i);
+			row[metadataNodeAttributesColumns.metadataNodeAttributeIdCol] = i;
+			row[metadataNodeAttributesColumns.metadataNodeAttributeNameCol] = xercesc::XMLString::transcode(dom_attr->getName());
+			row[metadataNodeAttributesColumns.metadataNodeAttributeValueCol] = xercesc::XMLString::transcode(dom_attr->getValue());
+			row[metadataNodeAttributesColumns.metadataNodeAttributeBgColorCol] = (i%2==0)?"white":"ghostwhite";
+		}		
+	}
+
+	AttributesTreeviewBox->add(*metadataNodeAttributesScrolledWindow);
+	
+	AttributesTreeviewBox->show();
+	metadataNodeAttributesScrolledWindow->show();
+	metadataNodeAttributesTreeview->show();
+
+	nodebox->add(*AttributesTreeviewBox);
+}
+
+void metadataWindow::configureNodeChildrenTreeview(xercesc::DOMElement * children, Gtk::Box * nodebox) {
+
+	Gtk::Box * ChildrenTreeviewBox = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+	ChildrenTreeviewBox->set_size_request(120, 150);
+
+	NodeChildrenModelColumns metadataNodeChildrenColumns;
+
+	Gtk::ScrolledWindow * metadataNodeChildrenScrolledWindow = manage(new Gtk::ScrolledWindow());
+	metadataNodeChildrenScrolledWindow->set_size_request(120, 150);
+
+	Gtk::TreeView * metadataNodeChildrenTreeview = manage(new Gtk::TreeView());
+
+
+//Add the TreeView, inside a ScrolledWindow, with the button underneath:
+  metadataNodeChildrenScrolledWindow->add(*metadataNodeChildrenTreeview);
+
+  //Only show the scrollbars when they are necessary:
+  metadataNodeChildrenScrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+	Glib::RefPtr<Gtk::ListStore> metadataNodeChildrenStore;
+  Glib::RefPtr<Gtk::TreeSelection> metadataNodeChildrenTreeviewSelection;
+
+	// create the data model
+	metadataNodeChildrenStore = Gtk::ListStore::create(metadataNodeChildrenColumns);
+	// set the data model
+  metadataNodeChildrenTreeview->set_model(metadataNodeChildrenStore);
+
+	//Add the TreeView's view columns
+  metadataNodeChildrenTreeview->append_column("", metadataNodeChildrenColumns.metadataNodeChildrenIdCol);
+  metadataNodeChildrenTreeview->append_column("Children name", metadataNodeChildrenColumns.metadataNodeChildrenNameCol);
+  metadataNodeChildrenTreeview->append_column("Bgcolor", metadataNodeChildrenColumns.metadataNodeChildrenBgColorCol);
+
+	Gtk::TreeView::Column* pColumn;
+	for(guint i = 1; i < 2; i++)
+  { 
+		pColumn = metadataNodeChildrenTreeview->get_column(i);
+		Gtk::CellRenderer* cellRenderer = metadataNodeChildrenTreeview->get_column_cell_renderer(i);
+		pColumn->add_attribute(cellRenderer->property_cell_background(), metadataNodeChildrenColumns.metadataNodeChildrenBgColorCol);
+    pColumn->set_reorderable();
+		switch(i) {
+			case 1 : pColumn->set_sort_column(metadataNodeChildrenColumns.metadataNodeChildrenNameCol); break;
+		}
+  }
+	pColumn = metadataNodeChildrenTreeview->get_column(2);
+	pColumn->set_visible(false);
+	//All the items to be reordered with drag-and-drop
+	// Set the visibility state of the headers. 
+	metadataNodeChildrenTreeview->set_headers_visible(true);
+	// Allow the column title buttons to be clicked
+	metadataNodeChildrenTreeview->set_headers_clickable(true);
+	// Resize all columns to their optimal width. 
+	metadataNodeChildrenTreeview->columns_autosize();
+	// all element are reordorable
+	metadataNodeChildrenTreeview->set_reorderable();
+  metadataNodeChildrenTreeview->set_rules_hint();
+	// grab the treeview selection
+	metadataNodeChildrenTreeviewSelection = metadataNodeChildrenTreeview->get_selection();
+	// connect signal to dectect when tree selection change
+	//metadataNodeChildrenTreeview->signal_button_press_event().connect(sigc::mem_fun(*this,
+  //            &metadataWindow::on_metadata_selection_changed),false);
+	
+
+	int i=0;
+	for (xercesc::DOMElement * nodechildren = children; nodechildren != 0	; nodechildren = nodechildren->getNextElementSibling()) {
+  	Gtk::TreeModel::Row row = *(metadataNodeChildrenStore->prepend());
+		// track position
+		row[metadataNodeChildrenColumns.metadataNodeChildrenIdCol] = i;
+		row[metadataNodeChildrenColumns.metadataNodeChildrenNameCol] = xercesc::XMLString::transcode(nodechildren->getTagName());
+		row[metadataNodeChildrenColumns.metadataNodeChildrenBgColorCol] = (i%2==0)?"white":"ghostwhite";
+		i++;
+	}
+
+	ChildrenTreeviewBox->show();
+	metadataNodeChildrenScrolledWindow->show();
+	metadataNodeChildrenTreeview->show();
+
+	ChildrenTreeviewBox->add(*metadataNodeChildrenScrolledWindow);
+
+	nodebox->add(*ChildrenTreeviewBox);
+}
+
+void metadataWindow::configureNodeText(std::string nodetext, Gtk::Box * nodebox) {
+
+	Gtk::Box * nodeTextViewBox = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+	nodeTextViewBox->set_size_request(120, 150);
+
+	Gtk::ScrolledWindow * nodeTextViewScrolledWindow = manage(new Gtk::ScrolledWindow());
+	nodeTextViewScrolledWindow->set_size_request(120, 150);
+
+	Gtk::TextView * nodeTextView = manage (new Gtk::TextView());
+	metadataTextBuffer = Gtk::TextBuffer::create();
+ metadataTextBuffer->set_text(nodetext);
+
+	 nodeTextView->set_buffer(metadataTextBuffer);
+	//Add the TreeView, inside a ScrolledWindow, with the button underneath:
+  nodeTextViewScrolledWindow->add(*nodeTextView);
+	nodeTextView->show();
+  //Only show the scrollbars when they are necessary:
+  nodeTextViewScrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+	nodeTextViewBox->add(*nodeTextViewScrolledWindow);
+	nodeTextViewScrolledWindow->show();
+	nodebox->add(*nodeTextViewBox);
+	nodeTextViewBox->show();
+}
+
 
 // configure the gtk box encapsulated in the gtk expander
 void metadataWindow::configureEncapsultedBox(Gtk::Box * b) {
@@ -79,9 +280,11 @@ void metadataWindow::configureExpander(Gtk::Expander * e) {
 		// signal handler to detect what expander has been expanded
 	e->property_expanded().signal_changed().connect(sigc::bind<Gtk::Expander *>(sigc::mem_fun(*this, &metadataWindow::on_openExpander_changed), e));
 	e->set_margin_left(0);
+	// override font color
+	e->override_color (black, Gtk::STATE_FLAG_NORMAL);
 	// use the pango markup language
 	e->set_use_markup(true);
-	// define the expander label
+	// set the expander label
 	e->set_label("<b>"+e->get_label()+"</b>");
 }
 
@@ -92,8 +295,8 @@ void metadataWindow::configureEventLabel(Gtk::EventBox * evLabel, Gtk::Label * l
 			// connect mouse detection events
 			evLabel->signal_enter_notify_event().connect(sigc::bind(sigc::mem_fun(*this, &metadataWindow::on_enter_label),evLabel));
 			evLabel->signal_leave_notify_event().connect(sigc::bind(sigc::mem_fun(*this, &metadataWindow::on_leave_label),evLabel));
+			evLabel->signal_button_press_event().connect(sigc::bind(sigc::mem_fun(*this, &metadataWindow::on_press_label),evLabel,label));
 			// initialize eventBox background color
-			Gdk::RGBA white("FFFFFF");
 			evLabel->override_background_color (white, Gtk::STATE_FLAG_NORMAL);
 }
 
@@ -101,41 +304,9 @@ void metadataWindow::configureEventLabel(Gtk::EventBox * evLabel, Gtk::Label * l
 void metadataWindow::configureLabel(Gtk::Label * l) {
 	l->set_justify(Gtk::JUSTIFY_LEFT);
 	l->set_halign(Gtk::ALIGN_START);
+	l->override_color(black, Gtk::STATE_FLAG_NORMAL);
 	l->set_markup("<b>"+l->get_text()+"</b>");
 	l->set_margin_left(l->get_margin_left()+18);
-}
-
-
-// create a new box to encapsulte a node text
-void metadataWindow::createExpanderTextBox(Gtk::Expander * ed, Gtk::Box *bd, std::string txt) {
-					// create a new box to encapsulte the node text
-				Gtk::Box * vBoxTagvalue = manage(new Gtk::VBox());
-				Gtk::Box * hBoxTagvalue = manage(new Gtk::HBox());
-				// define the vertical and horizontal alignment
-				vBoxTagvalue->set_valign(Gtk::ALIGN_START);				
-				hBoxTagvalue->set_halign(Gtk::ALIGN_START);
-				// show the vbox and add in the hbox				
-				vBoxTagvalue->show();
-				vBoxTagvalue->add(*hBoxTagvalue);				
-				// define the indentation
-				vBoxTagvalue->set_margin_left(bd->get_margin_left()+16);
-				// create labels
-				Gtk::Label *ValueLabel  = (manage(new Gtk::Label("Value : ")));
-				Gtk::Label *ValueText  =  (manage(new Gtk::Label(txt))); ///////////////////
-				// define the styles and markup for labels
-				ValueLabel->set_justify(Gtk::JUSTIFY_LEFT);
-				ValueLabel->set_halign(Gtk::ALIGN_START);
-				ValueLabel->set_markup("<i>"+ValueLabel->get_text()+"</i>");
-				// add labels in hbox
-				hBoxTagvalue->add(*ValueLabel);
-				hBoxTagvalue->add(*ValueText);
-				// show label
-				ValueLabel->show();
-				ValueText->show();
-				// show hbox
-				hBoxTagvalue->show();
-				// add the new vbox to Gtk Expander parent 
-				ed->add(*vBoxTagvalue); ///
 }
 
 void metadataWindow::finishEncapsulation(Gtk::Box * root, Gtk::Expander * node) {
@@ -148,21 +319,21 @@ void metadataWindow::finishEncapsulation(Gtk::Box * root, Gtk::EventBox * evLabe
 				evLabel->show_all();
 }
 
-void metadataWindow::createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node) {
+/*void metadataWindow::createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Expander * node) {
 	// create the menu
-	Gtk::Menu *Menu = new Gtk::Menu();
+	Gtk::Menu *Menu = manage(new Gtk::Menu());
 	int num= dom_attrs->getLength();
 	// if the node has attributes
 	if (num != 0) {
 		for(int i=0; i<num;i++) {
 			xercesc::DOMAttr* dom_attr = (xercesc::DOMAttr*) dom_attrs->item(i);
 			// append item to the menu
-			Gtk::MenuItem *nameItem = new Gtk::MenuItem((std::string)xercesc::XMLString::transcode(dom_attr->getName())+" : "+(std::string)xercesc::XMLString::transcode(dom_attr->getValue()));
+			Gtk::MenuItem *nameItem = manage(new Gtk::MenuItem((std::string)xercesc::XMLString::transcode(dom_attr->getName())+" : "+(std::string)xercesc::XMLString::transcode(dom_attr->getValue())));
 			Menu->add(*nameItem);
 		}		
 	} else {
 		
-		Gtk::MenuItem *nameItem = new Gtk::MenuItem("no attributes");
+		Gtk::MenuItem *nameItem = manage(new Gtk::MenuItem("no attributes"));
 		Menu->add(*nameItem);
 	}
 	Menu->show_all();
@@ -171,22 +342,23 @@ void metadataWindow::createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, 
 }
 
 void metadataWindow::createAttributesPopup(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::EventBox * evLabel) {
-	Gtk::Menu *Menu = new Gtk::Menu();
+	Gtk::Menu *Menu = manage(new Gtk::Menu());
 	int num= dom_attrs->getLength();
 	if (num != 0) {
 		for(int i=0; i<num;i++) {
 			xercesc::DOMAttr* dom_attr = (xercesc::DOMAttr*) dom_attrs->item(i);
-			Gtk::MenuItem *nameItem = new Gtk::MenuItem((std::string)xercesc::XMLString::transcode(dom_attr->getName())+" -> "+(std::string)xercesc::XMLString::transcode(dom_attr->getValue()));
+			Gtk::MenuItem *nameItem = manage(new Gtk::MenuItem((std::string)xercesc::XMLString::transcode(dom_attr->getName())+" -> "+(std::string)xercesc::XMLString::transcode(dom_attr->getValue())));
 			Menu->add(*nameItem);
-		}		
+		}
 	} else {
-		Gtk::MenuItem *nameItem = new Gtk::MenuItem("no attributes");
+		Gtk::MenuItem *nameItem = manage(new Gtk::MenuItem("no attributes"));
 		Menu->add(*nameItem);
 	}
 	Menu->show_all();
 	evLabel->signal_button_press_event().connect(sigc::bind(sigc::mem_fun(*this,
 	                    &metadataWindow::on_extanderpressed_pressed),Menu));
 }
+*/
 
 void metadataWindow::progress_cb(float progress, EBUCore::ProgressCallbackLevel level, const char *function, const char *msg_format, ...) {
 	// append a newline to the msg_format string
@@ -223,41 +395,38 @@ void metadataWindow::writeMetadataBuffer(std::string filename) {
 	xmlViewportFirst = xmlViewport1.c_str();
 }
 
-void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth) {
+void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, int idbox) {
 	// create a new box to encapsulte the tree levels
 	Gtk::Box * root = manage(new Gtk::VBox());
+
 	// configure the new box
 	configureEncapsultedBox(root);
 	do {
-		if (el->hasChildNodes()) {
+		viewport1minimumwidth = (((xercesc::XMLString::stringLen(el->getTagName())*7)+(depth*16)) > viewport1minimumwidth) ? ((xercesc::XMLString::stringLen(el->getTagName())*7)+(depth*16)) : viewport1minimumwidth;
+		if (el->hasChildNodes() and el->getChildElementCount() != 0) {
 			// create a new expander to store the node children
 			Gtk::Expander * node = manage( new Gtk::Expander(xercesc::XMLString::transcode(el->getTagName())) );
+			// set a name/id to the node
+			node->set_name(std::to_string(cptnode++));
+			// store the DOM element adress
+			elReferences.push_back(el);
 			// configure the new expander
 			configureExpander(node);
-			// visit the first children of the current node
-			if (el->getChildElementCount() != 0) {
-				recursiveConstructTreeView(el->getFirstElementChild(), node ,depth+1);
-			// if the node hasn't children then create a text box
-			} else {
-				// if it's a text node
-				if (el->getFirstChild() != 0) {
-					createExpanderTextBox(node, root, xercesc::XMLString::transcode(el->getTextContent()));
-				}
-			}
-			// generate the popup menu with the attributes
-			createAttributesPopup(el->getAttributes(),node);
 			// end encapsultation level
 			finishEncapsulation(root,node);
+			// visit the first children of the current node
+			recursiveConstructTreeView(el->getFirstElementChild(), node ,depth+1,cptnode);
 		} else {
 			Gtk::EventBox *eventLabel = manage(new Gtk::EventBox);
+			eventLabel->set_name(std::to_string(cptnode++));
+			// store the DOM element adress
+			elReferences.push_back(el);
 			// create a new label to store the node children
 			Gtk::Label * label = manage( new Gtk::Label(xercesc::XMLString::transcode(el->getTagName())) );
 			/// configure the new label
 			configureLabel(label);
 			/// configure the new eventbox and encapsulate the label
 			configureEventLabel(eventLabel,label);
-			// generate the popup menu with the attributes
-			createAttributesPopup(el->getAttributes(),eventLabel);
 			// end encapsultation level
 			finishEncapsulation(root,eventLabel);
 		}
@@ -269,57 +438,84 @@ void metadataWindow::recursiveConstructTreeView(xercesc::DOMElement * el, Gtk::E
 	root->show();
 }
 
-
-void metadataWindow::recursiveConstructEditableTreeView(xercesc::DOMElement * el, Gtk::Expander * seed, int depth, std::vector<Gtk::Entry *> & Entries) {
-	
+void metadataWindow::constructEditableNode(xercesc::DOMElement * el) {
+	// grab the boxEntry child
+	std::vector< Widget* > childbox = boxEntries->get_children();
 	// create a new box to encapsulte the tree levels
-	Gtk::Box * root = manage(new Gtk::VBox());
-	// configure the new box
-	configureEncapsultedBox(root);
-	do {
-		Gtk::Entry * editableEntry = manage(new Gtk::Entry());
-		editableEntry->set_text(xercesc::XMLString::transcode(el->getTagName()));
-		editableEntry->show();
-		root->add(*editableEntry);
-		Entries.push_back(editableEntry);
-		if (el->hasChildNodes()) {
-			// create a new expander to store the node children
-			Gtk::Expander * node = manage( new Gtk::Expander(xercesc::XMLString::transcode(el->getTagName())) );
-			// configure the new expander
-			configureExpander(node);
-			// visit the first children of the current node
-			if (el->getChildElementCount() != 0) {
-				recursiveConstructEditableTreeView(el->getFirstElementChild(), node ,depth+1,Entries);
-			// if the node hasn't children then create a text box
-			} else {
-				// if it's a text node
-				if (el->getFirstChild() != 0) {
-					createExpanderTextBox(node, root, xercesc::XMLString::transcode(el->getTextContent()));
-				}
-			}
-			// generate the popup menu with the attributes
-			createAttributesPopup(el->getAttributes(),node);
-			// end encapsultation level
-			finishEncapsulation(root,node);
+	if (childbox.size()>0) {
+		boxEntries->remove(*childbox.at(0));
+		delete childbox.at(0);
+	}
+		
+	Gtk::Box * entryLevel = manage(new Gtk::VBox());
+
+	Gtk::Entry * editableEntry = manage(new Gtk::Entry());
+
+	editableEntry->set_text(xercesc::XMLString::transcode(el->getTagName()));
+
+	editableEntry->show();
+
+	Gtk::Box * nodeTypeBox = manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL,100));
+	Gtk::Label * nodeTypeLabel = manage(new Gtk::Label("Type"));
+	Gtk::Label * nodeTypeValue = manage(new Gtk::Label());
+	nodeTypeLabel->show();
+	nodeTypeValue->show();
+	nodeTypeBox->add(*nodeTypeLabel);
+	nodeTypeBox->add(*nodeTypeValue);
+	nodeTypeBox->show();
+
+	Gtk::Label * tagTitle = manage(new Gtk::Label("Tag name"));
+	tagTitle->set_justify(Gtk::JUSTIFY_LEFT);
+	tagTitle->set_halign(Gtk::ALIGN_START);
+	tagTitle->show();		
+	Gtk::Label * nodeContent = manage(new Gtk::Label());
+	nodeContent->set_justify(Gtk::JUSTIFY_LEFT);
+	nodeContent->set_halign(Gtk::ALIGN_START);
+	nodeContent->show();
+
+
+	if (el->hasChildNodes()) {
+		
+		// visit the first children of the current node
+		if (el->getChildElementCount() != 0) {
+			nodeTypeValue->set_text("Node");
+			nodeContent->set_text("Node children");
+		// if the node hasn't children then create a text box
 		} else {
-			Gtk::EventBox *eventLabel = manage(new Gtk::EventBox);
-			// create a new label to store the node children
-			Gtk::Label * label = manage( new Gtk::Label(xercesc::XMLString::transcode(el->getTagName())) );
-			/// configure the new label
-			configureLabel(label);
-			/// configure the new eventbox and encapsulate the label
-			configureEventLabel(eventLabel,label);
-			// generate the popup menu with the attributes
-			createAttributesPopup(el->getAttributes(),eventLabel);
-			// end encapsultation level
-			finishEncapsulation(root,eventLabel);
+			// if it's a text node
+			if (el->getFirstChild() != 0) {
+			nodeTypeValue->set_text("Leaf");
+			nodeContent->set_text("Node text");
+			}
 		}
-		// next node at this level
-		el = el->getNextElementSibling();
-	} while (el != 0);
-	// add and show...
-	seed->add(*root);
-	root->show();
+	} else {
+		nodeTypeValue->set_text("Lonely node");
+		nodeContent->set_text("Empty node");
+		Gtk::EventBox *eventLabel = manage(new Gtk::EventBox);
+		// create a new label to store the node children
+		Gtk::Label * label = manage( new Gtk::Label(xercesc::XMLString::transcode(el->getTagName())) );
+		/// configure the new label
+		configureLabel(label);
+		/// configure the new eventbox and encapsulate the label
+		configureEventLabel(eventLabel,label);
+		entryLevel->add(*eventLabel);
+	}
+	entryLevel->add(*tagTitle);
+	entryLevel->add(*editableEntry);
+	entryLevel->add(*nodeTypeBox);
+	// generate the popup menu with the attributes
+	configureNodeAttributesTreeview(el->getAttributes(),entryLevel);
+	entryLevel->add(*nodeContent);
+	if (nodeContent->get_text() == "Empty node") {
+	} else if (nodeContent->get_text() == "Node text") {
+		configureNodeText(xercesc::XMLString::transcode(el->getTextContent()),entryLevel);
+
+		std::cout<<"I'm a node text"<<std::endl;
+	} else if (nodeContent->get_text() == "Node children") {
+			configureNodeChildrenTreeview(el->getFirstElementChild(),entryLevel);
+	}
+	entryLevel->show();
+	boxEntries->add(*entryLevel);
 }
 
 
@@ -334,20 +530,36 @@ void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	// refresh the viewport and the first expander
 	// to display properly the new bunch of metadata
 	viewport1->remove(); viewport2->remove();
-	Expander->remove();	Expander2->remove();
+	Expander->remove();
 	previousnode = manage(new Gtk::Expander("!###ImAnEmptyExpander###!"));
 	// enable html tag support
 	Expander->set_use_markup(true);
-	Expander2->set_use_markup(true);
-	// colorize the filename
-	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(XMLfile.c_str())+"</span>");
-	Expander2->set_label("<span color='blue'>"+Glib::filename_display_basename(XMLfile.c_str())+"</span>");
+	// colorize the filename	
+	viewport1minimumwidth = 0;
+	Expander->override_color(blue, Gtk::STATE_FLAG_NORMAL);
+	Expander->set_label(Glib::filename_display_basename(XMLfile.c_str()));
+	viewport1minimumwidth = ((Glib::filename_display_basename(XMLfile.c_str())).size()*7 > viewport1minimumwidth)? (Glib::filename_display_basename(XMLfile.c_str())).size()*7 : viewport1minimumwidth;
+	Expander->set_margin_left(0);
 	// build the xml tree
-	recursiveConstructTreeView(dom_root, Expander,0);
-	recursiveConstructEditableTreeView(dom_root,Expander2,0, xmlEntries);
+	elReferences.clear();
+	previouslabel = false;
+ 	boxEntries = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+	cptnode = 0;
+	recursiveConstructTreeView(dom_root, Expander,0,0);
+	//recursiveConstructEditableTreeView(dom_root,Expander2,0, boxEntries, xmlEntries);
+	boxEntries->show();
 	// add the expander to the viewport
 	viewport1->add(*Expander);
-	viewport1->add(*Expander2);
+	viewport2->add(*boxEntries);
+	// set the new size
+	set_size_request(viewport1minimumwidth+370,-1);
+	// grab the current window position
+	get_position(position_x,position_y);
+	// reset window size and position and then reload the window if necessary
+	if (get_visible()) {
+		reshow_with_initial_size();
+		move(position_x,position_y);
+	}
 	//write metadata buffer
 	writeMetadataBuffer(XMLfile.c_str());
 }
@@ -364,10 +576,9 @@ void metadataWindow::extractMetadata(std::string filename) {
 	// prepare the viewport and the expander
 	// to receive a new bunch of metadatas
 	viewport1->remove(); viewport2->remove();
-	Expander->remove(); Expander2->remove();
+	Expander->remove();
 	// enable the html tag support
 	Expander->set_use_markup(true);
-	Expander2->set_use_markup(true);
 	previousnode = manage(new Gtk::Expander("!###ImAnEmptyExpander###!"));
 	// extract the metadata from an mxf file
 	// and store it in a temporary xml file
@@ -381,15 +592,31 @@ void metadataWindow::extractMetadata(std::string filename) {
 	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(xmltmp.c_str());
 	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
 	// set font color of the label expander
-	Expander->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
-	Expander2->set_label("<span color='blue'>"+Glib::filename_display_basename(filename.c_str())+"</span>");
+	viewport1minimumwidth = 0;	
+	Expander->override_color(blue, Gtk::STATE_FLAG_NORMAL);
+	Expander->set_label(Glib::filename_display_basename(filename.c_str()));
+	Expander->set_margin_left(0);
+	viewport1minimumwidth = ((Glib::filename_display_basename(filename.c_str())).size()*7 > viewport1minimumwidth)? (Glib::filename_display_basename(filename.c_str())).size()*7 : viewport1minimumwidth;
 	// build the XML tree
-	recursiveConstructTreeView(dom_root, Expander,0);
-	recursiveConstructEditableTreeView(dom_root, Expander2,0,xmlEntries);
+	elReferences.clear();
+	previouslabel = false;
+ 	boxEntries = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+	cptnode = 0;
+	recursiveConstructTreeView(dom_root, Expander,0,0);
+	//recursiveConstructEditableTreeView(dom_root, Expander2,0,boxEntries,xmlEntries);
+	boxEntries->show();
 	// add the new expander to the viewport
 	viewport1->add(*Expander);
-	viewport2->add(*Expander2);
-	// activate the metadata window buttons after loading
+	viewport2->add(*boxEntries);
+	// set the new size
+	set_size_request(viewport1minimumwidth+370,-1);
+	// grab the current window position
+	get_position(position_x,position_y);
+	// reset window size and position and then reload the window if required
+	if (get_visible()) {
+		reshow_with_initial_size();
+		move(position_x,position_y);
+	}
 	metadataLoaded();
 	//write metadata buffer
 	writeMetadataBuffer(xmltmp.c_str());
@@ -451,9 +678,10 @@ void metadataWindow::on_importXML_clicked(void)
 }
 
 void metadataWindow::on_modifyXML_clicked(void){
-	Expander2->show();
-	viewport2->show();
-	SecondScrolledWindow->show();
+	//Expander2->set_visible(!Expander2->get_visible());
+	//viewport2->set_visible(!Expander2->get_visible());
+	//SecondScrolledWindow->set_visible(!Expander2->get_visible());
+	
 }
 
 void metadataWindow::on_exportXML_clicked(void){
@@ -471,6 +699,7 @@ void metadataWindow::on_exportXML_clicked(void){
   const int response = chooser.run();
   if(response == Gtk::RESPONSE_OK)
   {
+		// write the file
 		filename = chooser.get_filename();
 		std::ofstream myfile;
 		myfile.open (((isExtension(Glib::filename_display_basename(chooser.get_filename()), "xml"))?filename:filename+".xml"));
@@ -489,12 +718,8 @@ void metadataWindow::on_XMLconformance_clicked(void)
 
 std::string metadataWindow::removeTags(std::string str) {
 	// current tags
-	int nbcurrenttags = 8;
-	std::string tags[] = {
-		"<b>","</b>","<span color='red'>",
-		"<span color='red'>","<span color='blue'>","</span>",
-		"<i>","</i>"
-	};
+	int nbcurrenttags = 4;
+	std::string tags[] = {"<b>","</b>","<i>","</i>"};
 	// temporary string
 	std::string replacement = "";	
 	std::string txt = str;
@@ -506,9 +731,10 @@ std::string metadataWindow::removeTags(std::string str) {
 	return txt;
 }
 
-bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu) {
+/*bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu) {
 	// detect when mouse right button is pressed
   if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) ) {
+		std::cout<<"right button pressed"<<std::endl;
 		// launch the popup menu
 		Menu->popup(event->button, event->time);
 		// signal has been handled.		
@@ -516,27 +742,41 @@ bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu
   }
 	// signal hasn't been handled.	
   return false;
-}
+}*/
 
 
 bool metadataWindow::on_enter_label(GdkEventCrossing*, Gtk::EventBox *evLabel) {
 		// reset the event box background color
 		evLabel->unset_background_color(Gtk::STATE_FLAG_NORMAL);
 		return true;
-
 }
 
 
 bool metadataWindow::on_leave_label(GdkEventCrossing*, Gtk::EventBox *evLabel) {
 	// set the event box background color as white
-	Gdk::RGBA white("FFFFFF");
 	evLabel->override_background_color (white, Gtk::STATE_FLAG_NORMAL);
-	std::cout<<xmlEntries.size()<<std::endl;
-	//for (unsigned int i=0;i<xmlEntries->size();i++) {
-			//std::cout<<xmlEntries->at(i)->get_text().c_str()<<std::endl;
-	//}
 	return true;
+}
 
+
+bool metadataWindow::on_press_label(GdkEventButton* event, Gtk::EventBox *evLabel, Gtk::Label * txtLabel) {
+	if( (event->type == GDK_BUTTON_PRESS) && (event->button == 1) ) {
+		if (previousnode->get_label() != "!###ImAnEmptyExpander###!" and !previouslabel) {
+			previousnode->override_color(black, Gtk::STATE_FLAG_NORMAL);
+			previousnode->set_label("<b>"+removeTags(previousnode->get_label())+"</b>");
+			previouslabel = !previouslabel;
+		} else if (previouslabel) {
+			previousnodelabel->override_color(black, Gtk::STATE_FLAG_NORMAL);
+		}
+		txtLabel->override_color(red,Gtk::STATE_FLAG_NORMAL);
+		previousnodepos = atoi(evLabel->get_name().c_str());
+		previousnodelabel = txtLabel;
+		constructEditableNode(elReferences.at(previousnodepos));
+		// signal has been handled.		
+    return true;
+  }
+	// signal hasn't been handled.	
+  return false;
 }
 
 void metadataWindow::metadataLoaded(void) {
@@ -550,9 +790,17 @@ void metadataWindow::metadataLoaded(void) {
 
 void metadataWindow::on_openExpander_changed(Gtk::Expander * exp) {
 	// update the previous textual breadcrumb if required
-	if (previousnode->get_label() != "!###ImAnEmptyExpander###!") {
+	if (previousnode->get_label() != "!###ImAnEmptyExpander###!" and !previouslabel) {		
+		previousnode->override_color(black, Gtk::STATE_FLAG_NORMAL);
 		previousnode->set_label("<b>"+removeTags(previousnode->get_label())+"</b>");
+	} else if (previouslabel) {
+		previousnodelabel->override_color(black, Gtk::STATE_FLAG_NORMAL);
+		previouslabel = !previouslabel;
 	}
-	exp->set_label("<span color='red'><b>"+removeTags(exp->get_label())+"</b></span>");
+	
+	exp->override_color(red, Gtk::STATE_FLAG_NORMAL);
+	exp->set_label("<b>"+removeTags(exp->get_label())+"</b>");
 	previousnode = exp;
+	previousnodepos = atoi(exp->get_name().c_str());
+	constructEditableNode(elReferences.at(previousnodepos));
 }
