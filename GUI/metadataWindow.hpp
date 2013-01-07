@@ -70,6 +70,7 @@
  * This class controls all the player features and its links
  */
 
+#include "ebucoreParser.hpp"
 
 using namespace EBUSDK;
 
@@ -363,6 +364,20 @@ protected:
    */
 	void writeMetadataBuffer(std::string filename);
 
+  // Signal handlers:
+  void on_addNode_assistant_apply(Glib::RefPtr<Gtk::ListStore> metadataStore);
+  void on_addAttribute_assistant_apply(Glib::RefPtr<Gtk::ListStore> metadataStore);
+	void on_addNodeText_assistant(Gtk::Box * text, Gtk::Box * children);
+  void on_assistant_cancel();
+  void on_assistant_close();
+
+virtual void addNode(Glib::RefPtr<Gtk::ListStore> metadataStore);
+virtual void addNodeAttribute(Glib::RefPtr<Gtk::ListStore> metadataStore);
+virtual void removeNode(Glib::RefPtr<Gtk::ListStore> metadataStore);
+virtual void removeNodeAttribute(Glib::RefPtr<Gtk::ListStore> metadataStore);
+
+void configureNodeEditionButtonsTreeview(Gtk::Box * nodebox, Glib::RefPtr<Gtk::ListStore> nodeStore);
+void configureNodeAttributeEditionButtonsTreeview(Gtk::Box * nodebox, Glib::RefPtr<Gtk::ListStore> attributeStore);
 void configureNodeAttributesTreeview(xercesc::DOMNamedNodeMap *dom_attrs, Gtk::Box * nodebox);
 void configureNodeChildrenTreeview(xercesc::DOMElement * children, Gtk::Box * nodebox);
 void constructEditableNode(xercesc::DOMElement * el);
@@ -378,15 +393,20 @@ void defineColors(void);
 			add(metadataNodeAttributeIdCol);
 			add(metadataNodeAttributeNameCol); 
 			add(metadataNodeAttributeValueCol);
+			add(metadataNodeAttributeStateCol);
 			add(metadataNodeAttributeBgColorCol);
 		}
 
     Gtk::TreeModelColumn<int> metadataNodeAttributeIdCol;
     Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeNameCol;
     Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeValueCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeStateCol;
     Gtk::TreeModelColumn<Glib::ustring> metadataNodeAttributeBgColorCol;
 
   };
+
+	NodeAttributesModelColumns metadataNodeAttributesColumns;
+	Glib::RefPtr<Gtk::TreeSelection> metadataNodeAttributesTreeviewSelection;
 
   //Node attributes Tree model columns:
   class NodeChildrenModelColumns : public Gtk::TreeModel::ColumnRecord
@@ -401,39 +421,46 @@ void defineColors(void);
 
     Gtk::TreeModelColumn<int> metadataNodeChildrenIdCol;
     Gtk::TreeModelColumn<Glib::ustring> metadataNodeChildrenNameCol;
+    Gtk::TreeModelColumn<Glib::ustring> metadataNodeChildrenStateCol;
     Gtk::TreeModelColumn<Glib::ustring> metadataNodeChildrenBgColorCol;
 
   };
 
+	NodeChildrenModelColumns metadataNodeChildrenColumns;
+	Glib::RefPtr<Gtk::TreeSelection> metadataNodeChildrenTreeviewSelection;
 
 	// Glade reference
   Glib::RefPtr<Gtk::Builder> m_refGlade; /*!< Glade references */
 	// Gtk Box
 	Gtk::Box* metadata_box; /*!< Metadata Box */
 	// Metadata Window
-	Gtk::Button* modifyXML; /*!< edit an XML file button */
+	Gtk::Button* enableEdition; /*!< edit an XML file button */
+	Gtk::Button* disableEdition; /*!< edit an XML file button */
   Gtk::Button* importXML; /*!< import an XML file button */
   Gtk::Button* exportXML; /*!< export an XML file button */
   Gtk::Button* saveXML; /*!< save an XML file button */
   Gtk::Button* XMLconformance; /*!< EBUcore conformance button */
 	Gtk::Viewport* viewport1; /*!< viewport1 the Gtk Viewport where is stored the expander */
 	Gtk::Expander * Expander; /*!< Expander the Gtk Expander is the EBUCore Metadata xml tree root */
-	Gtk::Viewport* viewport2; /*!< viewport2 the Gtk Viewport where is stored the second expander */
-	Gtk::ScrolledWindow * FirstScrolledWindow; /*!< Expander2 the Gtk Expander is the first EBUCore Metadata xml tree root */
-	Gtk::ScrolledWindow * SecondScrolledWindow; /*!< Expander2 the Gtk Expander is the second EBUCore Metadata xml tree root */
+	Gtk::ScrolledWindow * FirstScrolledWindow; /*!< FirstScrolledWindow */
+	Gtk::Box * SecondScrolledWindowBox;
 	
 	Gtk::Expander * previousnode; /*!< previousnode Pointer to store temporarly the current node selected */
 	Gtk::EventBox * previousnnodeevent; /*!< previousnode Pointer to store temporarly the current node selected */
 	Gtk::Label * previousnodelabel; /*!< previousnode Pointer to store temporarly the current node selected */
 	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
-	xercesc::DOMDocument * metadata; /*!< metadata Pointer to xerces-c containing the XML metadata */
+	//	xercesc::DOMDocument * metadata; /*!< metadata Pointer to xerces-c containing the XML metadata */
   
+	xercesc::DOMElement*  xml_dom_root;
+
 	std::string xmlViewportFirst;
 	std::string xmlViewportSecond;
 
  	Gtk::Box * boxEntries;
 	std::vector<xercesc::DOMElement *> elReferences;
  	Glib::RefPtr<Gtk::TextBuffer> metadataTextBuffer;
+ 	Glib::RefPtr<Gtk::TextBuffer> assistantTextBuffer;
+ 	Glib::RefPtr<Gtk::TextBuffer> assistantNodeChildrenBuffer;
 
 	bool previouslabel;
 	int cptnode, previousnodepos;
@@ -445,10 +472,20 @@ void defineColors(void);
 
 	Gdk::RGBA black;
 	Gdk::RGBA white;
+	Gdk::RGBA whiteghost;
 	Gdk::RGBA red;
 	Gdk::RGBA blue;
 
+	bool editionMode;
+	Gtk::Assistant * metadataAssistant;
+	Gtk::Entry * attributeNameEntry;
+	Gtk::Entry * attributeValueEntry;
+	Gtk::Entry * tagValueEntry;
+	bool addNode_type;
+	
 	enum metadataStates {ORIGINAL, MODIFIED, CREATE, DELETE};
+
+	ebucoreParser * schema;
 
 };
 
