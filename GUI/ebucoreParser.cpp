@@ -24,6 +24,8 @@ ebucoreParser::ebucoreParser(void)
 	cpti=0;
 	// Get the schemas filenames
 	getSchemas(dir,files);
+	//prepare dublin core attributes
+	DCAttr.push_back(DCAttribute());
 	// Debug output
 	std::cout<<"I have "<<files.size()<<" schemas files in memory."<<std::endl;
 	for (unsigned int i = 0;i < files.size();i++) {
@@ -133,14 +135,9 @@ void ebucoreParser::extractSchema(std::string pathtofile) {
 	schema_root = schema_root->getFirstElementChild();
 	schema_root = schema_root->getNextElementSibling()->getNextElementSibling();
 	// generate and store the ebucore root element
-	ebucoreParser::ElementStruct * element;
 	// save the root
-	std::cout<<"here..."<<std::endl;
-	ebucoremodel.push_back(element);	
-	std::cout<<"here 2..."<<std::endl;
+	ebucoremodel.push_back(constructSchema(schema_root));
 	// construct the skelleton
-	constructSchema(schema_root, element);
-	std::cout<<"here 3..."<<std::endl;
 }
 
 std::vector<std::string > ebucoreParser::generateChild(std::string father, xercesc::DOMElement * el) {
@@ -231,9 +228,9 @@ std::vector<std::string > ebucoreParser::generateChild(xercesc::DOMElement * el)
 	return children;
 }
 
-std::list<ebucoreParser::AttributeStruct> * ebucoreParser::generateAttributes(std::string father, xercesc::DOMElement * el) {
+std::list<ebucoreParser::AttributeStruct> ebucoreParser::generateAttributes(std::string father, xercesc::DOMElement * el) {
 	//std::cout<<"I'm trying to generate the element attribute list of : "<<father<<std::endl;
-	std::list<ebucoreParser::AttributeStruct> * attributes;
+	std::list<ebucoreParser::AttributeStruct> attributes;
 	xercesc::DOMElement * tmpEl = el;
 	//std::cout<<"back to the schema root"<<std::endl;
 	while ((std::string)(xercesc::XMLString::transcode((tmpEl->getParentNode())->getNodeName())) != "schema") {
@@ -273,7 +270,7 @@ std::list<ebucoreParser::AttributeStruct> * ebucoreParser::generateAttributes(st
 			attr.Enumeration = attrEnum;
 ////////////////////////
 			//std::cout<<((name.size()>0)?name:ref)<<" of type "<<((type.size()>0)?type:"string")<<" with "<<((byDefault.size()>0)?byDefault:"NULL")<<" as default value "<<", ";
-			attributes->push_back(attr);
+			attributes.push_back(attr);
 		}
 		tmpEl = tmpEl->getNextElementSibling();
 	} while (tmpEl != 0);
@@ -281,78 +278,83 @@ std::list<ebucoreParser::AttributeStruct> * ebucoreParser::generateAttributes(st
 	return attributes;
 }
 
-
-void ebucoreParser::generateAttributes(std::string father, xercesc::DOMElement * el, std::list<ebucoreParser::AttributeStruct> * att) {
-	xercesc::DOMElement * tmpEl = el;
-	//std::cout<<"back to the schema root"<<std::endl;
-	while ((std::string)(xercesc::XMLString::transcode((tmpEl->getParentNode())->getNodeName())) != "schema") {
-		tmpEl = dynamic_cast<xercesc::DOMElement*>(tmpEl->getParentNode());
-	}
-	//std::cout<<"go to the first children of the schema"<<std::endl;
-	tmpEl=(dynamic_cast<xercesc::DOMElement*>(tmpEl->getParentNode()))->getFirstElementChild();	
-	//std::cout<<"find the complextype who has the name of the father"<<std::endl;
-	//std::cout<<"TagName : "<<(std::string)(xercesc::XMLString::transcode(tmpEl->getTagName()))<<std::endl;
-	//std::cout<<"AttributeName : "<<(std::string)xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name")))<<std::endl;
-	while ((std::string)(xercesc::XMLString::transcode(tmpEl->getTagName())) != "complexType" or xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name"))) != father ) {
-		tmpEl = tmpEl->getNextElementSibling();
-		//std::cout<<"TagName : "<<(std::string)(xercesc::XMLString::transcode(tmpEl->getTagName()))<<std::endl;
-	//std::cout<<"AttributeName : "<<(std::string)xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name")))<<std::endl;
-	}	
-	//std::cout<<"I found my complexType"<<std::endl;
-
-	tmpEl=tmpEl->getFirstElementChild();	
-
-	
-//std::cout<< " my attribute list : ";
-	do {
-		if ((std::string)(xercesc::XMLString::transcode(tmpEl->getTagName())) == "attribute") {
-			ebucoreParser::AttributeStruct attr;
-			std::string name (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name"))));
-			std::string ref (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("ref"))));
-			std::string type (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("type"))));	
-			std::string byDefault (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("default"))));
-
-			attr.name = ((name.size()>0)?name:ref);
-			attr.type = ((type.size()>0)?type:"string");
-			attr.hasDefaultValue = ((byDefault.size()>0)?true:false);
-			attr.defaultValue = ((byDefault.size()>0)?byDefault:"NULL");
-///////////////////////
-			attr.hasEnumeration = false;
-			std::vector<std::string> attrEnum;
-			attr.Enumeration = attrEnum;
-////////////////////////
-			//std::cout<<((name.size()>0)?name:ref)<<" of type "<<((type.size()>0)?type:"string")<<" with "<<((byDefault.size()>0)?byDefault:"NULL")<<" as default value "<<", ";
-			att->push_back(attr);
-		}
-		tmpEl = tmpEl->getNextElementSibling();
-	} while (tmpEl != 0);
-}
-
 std::list<ebucoreParser::ElementStruct> ebucoreParser::generateChildren(std::string father, xercesc::DOMElement * el) {
-
+	
+	std::cout<<"1 - my father is : "<<father<<std::endl;
 	std::list<ebucoreParser::ElementStruct> children;
 	xercesc::DOMElement * tmpEl = el;
 
 	while ((std::string)(xercesc::XMLString::transcode(tmpEl->getTagName())) != "complexType" or xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name"))) != father ) {
+		std::cout<<"2 - my father is : "<<father<<std::endl;
 		tmpEl = tmpEl->getNextElementSibling();
 	}
+	std::cout<<"3 - my father is : "<<father<<std::endl;
 	tmpEl=tmpEl->getFirstElementChild();
 
 	while ((std::string)(xercesc::XMLString::transcode(tmpEl->getTagName())) != "sequence") {
+		std::cout<<"4 - my father is : "<<father<<std::endl;
 		tmpEl = tmpEl->getNextElementSibling();
 	}
+	std::cout<<"5 - my father is : "<<father<<std::endl;
 	tmpEl=tmpEl->getFirstElementChild();
-
+	std::cout<<"6 - my father is : "<<father<<std::endl;
 	do {
+		std::cout<<"here 1"<<std::endl;
 		if ((std::string)(xercesc::XMLString::transcode(tmpEl->getTagName())) == "element") {
+			std::cout<<"here 2"<<std::endl;
 			std::string name (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("name"))));
+			std::string type (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("type"))));
+			std::string ref (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("ref"))));
+			std::string min (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("minOccurs"))));
+			std::string max (xercesc::XMLString::transcode(tmpEl->getAttribute (xercesc::XMLString::transcode("maxOccurs"))));
+			
+			std::cout<<"here 2a"<<std::endl;
 			ebucoreParser::ElementStruct internalChildren;
-			internalChildren.name = name;
+			
+			std::cout<<"here 2b"<<std::endl;
+			internalChildren.name = (name.size()>0)?name:ref;
+
+			std::cout<<internalChildren.name<<" here 2c"<<std::endl;
+			internalChildren.minCardinality = ((min.size()>0)?atoi(min.c_str()):1);
+			internalChildren.maxCardinality = ((max.size()>0)?isUnbounded(max):1);
+
+			std::cout<<"["<<internalChildren.minCardinality<<","<<internalChildren.maxCardinality<<"] here 2d"<<std::endl;
+			internalChildren.type = ( (type.size()>0) ? removePrefix (type, ":") : "" );
+
+			std::cout<<internalChildren.type<< " "<<isDCSimpleType(type)<<"here 2e"<<std::endl;
+		
+		std::cout<<"my type is : "<< type <<std::endl;
+			if (!isStandardType(type)) {
+				std::cout<<"my type is non standard"<<std::endl;
+				if (type.size()>0) {
+					
+					std::cout<<"non empty"<<std::endl;
+					internalChildren.attribute = (isDCSimpleType(type)) ? DCAttr : generateAttributes(internalChildren.type, tmpEl);
+					internalChildren.type = ( (isDCSimpleType(type)) ? DCType() : internalChildren.type );
+				} else {
+					
+				std::cout<<"wmpty"<<std::endl;
+					internalChildren.attribute = (isDCSimpleType(internalChildren.name))? DCAttr : generateAttributes(internalChildren.type, tmpEl);
+				std::cout<<"kikou"<<std::endl;
+					internalChildren.type = ( (isDCSimpleType(internalChildren.name)) ? DCType() : (((std::string)(xercesc::XMLString::transcode(tmpEl->getFirstElementChild()->getTagName())) == "complexType" ) ? "youloulou" : "areeeu" ) );
+					
+				}
+
+				std::cout<<"here 2f"<<std::endl;
+				if (internalChildren.type != "DublinCore") {
+					std::cout<<"I gonna build the children of this element..."<<std::endl;
+					internalChildren.children = generateChildren(internalChildren.type, el);
+			}
+			}
 			children.push_back(internalChildren);
-		}	
+			cpti++;
+			std::cout<<"next...."<<std::endl;
+			std::cout<<"cpt equal "<< cpti<<std::endl;
+		}
+				std::cout<<"here 3"<<std::endl;
 		tmpEl = tmpEl->getNextElementSibling();
 	} while (tmpEl != 0);
-
+	std::cout<<"my father is : "<<father<<"bye bye"<<std::endl;
 	return children;
 
 }
@@ -396,14 +398,17 @@ std::vector<int> ebucoreParser::copyLocalOccurencies(int position) {
 	return occurency.at(position);
 }
 
-std::vector<std::string > ebucoreParser::DCAttribute(void) {
-	std::vector<std::string > attr;
-	attr.push_back("xml:lang");
+ebucoreParser::AttributeStruct ebucoreParser::DCAttribute(void) {
+	AttributeStruct attr;
+	attr.name = "xml:lang";
+	attr.type = "string";
+	attr.hasDefaultValue = false;
+	attr.hasEnumeration = false;
 	return attr;
 }
 
 std::string ebucoreParser::DCType(void) {
-	return "Dublin Core";
+	return "DublinCore";
 }
 
 std::vector<std::string> ebucoreParser::listEnumeration(xercesc::DOMElement * el) {
@@ -452,10 +457,10 @@ std::string ebucoreParser::identifyType(xercesc::DOMElement * el) {
 	return "NULL";
 }
 
-void ebucoreParser::constructSchema(xercesc::DOMElement * el, ebucoreParser::ElementStruct * root) {
+ebucoreParser::ElementStruct ebucoreParser::constructSchema(xercesc::DOMElement * el) {
 	
 		
-		std::cout<<"i start constructing..."<<std::endl;
+	//	std::cout<<"i start constructing..."<<std::endl;
 		
 		std::string str (xercesc::XMLString::transcode(el->getAttribute (xercesc::XMLString::transcode("name"))));
 		std::string type (xercesc::XMLString::transcode(el->getAttribute (xercesc::XMLString::transcode("type"))));
@@ -463,43 +468,45 @@ void ebucoreParser::constructSchema(xercesc::DOMElement * el, ebucoreParser::Ele
 		std::string min (xercesc::XMLString::transcode(el->getAttribute (xercesc::XMLString::transcode("minOccurs"))));
 		std::string max (xercesc::XMLString::transcode(el->getAttribute (xercesc::XMLString::transcode("maxOccurs"))));
 
+ebucoreParser::ElementStruct root;
+	//std::cout<<"I write"<<std::endl;
 
-	std::cout<<"I write"<<std::endl;
-
-		root->name = (str.size()>0)?str:ref;
+		root.name = (str.size()>0)?str:ref;
 	
-	std::cout<<"name..."<<str<<std::endl;
-		root->minCardinality = ((min.size()>0)?atoi(min.c_str()):1);
+	//std::cout<<"name..."<<((str.size()>0)?str:ref)<<std::endl;
+		root.minCardinality = ((min.size()>0)?atoi(min.c_str()):1);
 
-	std::cout<<" min..."<<min<<std::endl;
-		root->maxCardinality = ((max.size()>0)?isUnbounded(max):1);
+	//std::cout<<" min..."<<min<<std::endl;
+		root.maxCardinality = ((max.size()>0)?isUnbounded(max):1);
 
-	std::cout<<"max..."<<max<<std::endl;
+	//std::cout<<"max..."<<max<<std::endl;
 
-	std::cout<<"type -> "<<type<<std::endl;
-	std::list<ebucoreParser::AttributeStruct> att;
-	generateAttributes(removePrefix (type, ":"), el, &root->attribute);
+	//std::cout<<"type -> "<<type<<std::endl;
+		root.type = ((type.size()>0)?type:"undefined");
+	
+	root.attribute = ebucoreParser::generateAttributes(removePrefix (type, ":"), el);;
+	
+	//std::cout<<"attribute..."<<std::endl;
+		root.children = generateChildren(removePrefix (type, ":"), el);
 
-
-	std::cout<<"attribute..."<<std::endl;
-		root->children = generateChildren(removePrefix (type, ":"), el);
-
-	std::cout<<"I add cpt"<<std::endl;
+	//std::cout<<"I add cpt"<<std::endl;
 		cpti++;
 			
 		// verification
+	
+	//std::cout<<"I verify..."<<std::endl;
+		//std::cout<<"element : "<<root.name<<" of type : "<<root.type<<std::endl;
+		//std::cout<<"   cardinality : ["<<root.minCardinality<<", "<<root.maxCardinality<<"]"<<std::endl;
+		//std::cout<<"   attributes : "<<root.attribute.size()<<std::endl;
+		//for (std::list<ebucoreParser::AttributeStruct>::iterator it=root.attribute.begin(); it != root.attribute.end(); ++it) {
+    //	std::cout << "     - " <<it->name<<" : "<<it->type<<" / "<<((it->hasDefaultValue)?it->defaultValue:"undefined")<<" / "<<((it->hasEnumeration)?"yes":"no")<<std::endl;
+		//}
+		std::cout<<"   children : "<<root.children.size()<<std::endl;
+		for (std::list<ebucoreParser::ElementStruct>::iterator it=root.children.begin(); it != root.children.end(); ++it) {
+    	std::cout << "   - " <<it->name<<" of type "<<it->type<<" and it has "<<it->attribute.size()<<" attribute and "<<it->children.size()<<" children."<<std::endl;
+		}
 
-	std::cout<<"I verify..."<<std::endl;
-		std::cout<<"element : "<<root->name<<std::endl;
-		std::cout<<"   cardinality : ["<<root->minCardinality<<", "<<root->maxCardinality<<"]"<<std::endl;
-		std::cout<<"   attributes : "<<root->attribute.size()<<std::endl;
-		for (std::list<ebucoreParser::AttributeStruct>::iterator it=root->attribute.begin(); it != root->attribute.end(); ++it) {
-    	std::cout << "     - " <<it->name<<" : "<<it->type<<" / "<<((it->hasDefaultValue)?it->defaultValue:"undefined")<<" / "<<((it->hasEnumeration)?"yes":"no")<<std::endl;
-		}
-		std::cout<<"   children : "<<root->children.size()<<std::endl;
-		for (std::list<ebucoreParser::ElementStruct>::iterator it=root->children.begin(); it != root->children.end(); ++it) {
-    	std::cout << "     - " <<it->name<<std::endl;
-		}
+return root;
 }
 
 /*void ebucoreParser::recursiveConstructSchema(xercesc::DOMElement * el) {
@@ -610,6 +617,20 @@ bool ebucoreParser::isSimpleType(std::string str) {
 bool ebucoreParser::isDCSimpleType(std::string str) {
 	// compare the file extension to the extension pattern
   return (str.find_first_of("dc:") == 0) ? true : false;
+}
+
+bool ebucoreParser::isStandardType(std::string str) {
+	// compare the file extension to the extension pattern
+	const std::string elementType[] = {"string","nonNegativeInteger","boolean","long","integer","time","duration","hexBinary"};
+	for (int i=0;i<8;i++) {
+		if (elementType[i] == str) {return true;}
+	}
+  return false;
+}
+
+bool ebucoreParser::isEBUCoreType(std::string str) {
+	// compare the file extension to the extension pattern
+  return (str.find_first_of("ebucore:") == 0) ? true : false;
 }
 
 int ebucoreParser::isUnbounded(std::string max) {

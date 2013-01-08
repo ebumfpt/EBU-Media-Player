@@ -38,6 +38,8 @@ protected:
 	bool isExtension(std::string str, std::string extension);
 	bool isSimpleType(std::string str);
 	bool isDCSimpleType(std::string str);
+	bool isStandardType(std::string str);
+	bool isEBUCoreType(std::string str);
 	int isUnbounded(std::string max);
 
 	bool elementExist(std::string str);
@@ -74,22 +76,27 @@ protected:
 
 	struct ElementStruct {
 		std::string name;
+		std::string type;
 		std::list<AttributeStruct> attribute;
 		std::list<ElementStruct> children;		
 		int minCardinality;
 		int maxCardinality;	
 	};
 
-	std::vector<std::string > DCAttribute(void);
+std::vector<ElementStruct> ebucoremodel;
+
+	AttributeStruct DCAttribute(void);
+	std::list<AttributeStruct> DCAttr;
+
 	std::string DCType(void);
 	std::vector<std::string > generateChildText(void);
-	std::list<AttributeStruct> * generateAttributes(std::string father, xercesc::DOMElement * el);
-	void generateAttributes(std::string father, xercesc::DOMElement * el, std::list<AttributeStruct> * att);
+	std::list<AttributeStruct> generateAttributes(std::string father, xercesc::DOMElement * el);
 	std::list<ElementStruct> generateChildren(std::string father, xercesc::DOMElement * el);
 
 	std::string identifyType(xercesc::DOMElement * el);
 	std::vector<std::string> listEnumeration(xercesc::DOMElement * el);
-	void constructSchema(xercesc::DOMElement * el, ElementStruct * root);
+	ElementStruct constructSchema(xercesc::DOMElement * el);
+	ElementStruct newElement(xercesc::DOMElement * el);
 
 	void printElements(void);
 	void printChildren(int position);
@@ -102,8 +109,6 @@ protected:
 	std::vector<std::vector<std::string > > attribute;
 	std::vector<std::vector<std::string > > type;
 	std::vector<std::vector<int> > occurency;
-
-	std::vector<ElementStruct *> ebucoremodel;
 
 int cpti;
 };
