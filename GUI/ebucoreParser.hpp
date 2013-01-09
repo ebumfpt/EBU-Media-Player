@@ -80,7 +80,8 @@ protected:
 		std::list<AttributeStruct> attribute;
 		std::list<ElementStruct> children;		
 		int minCardinality;
-		int maxCardinality;	
+		int maxCardinality;
+		bool leaf;
 	};
 
 std::vector<ElementStruct> ebucoremodel;
@@ -90,6 +91,7 @@ std::vector<ElementStruct> ebucoremodel;
 
 	std::string DCType(void);
 	std::vector<std::string > generateChildText(void);
+	AttributeStruct packAttribute(xercesc::DOMElement * el);
 	std::list<AttributeStruct> generateAttributes(std::string father, xercesc::DOMElement * el);
 	std::list<ElementStruct> generateChildren(std::string father, xercesc::DOMElement * el);
 
