@@ -20,6 +20,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <list>
 #include <xercesc/dom/DOM.hpp>
 
@@ -34,36 +35,6 @@ class ebucoreParser {
   ebucoreParser(void);
 	~ebucoreParser(void);
 protected:
-	int getSchemas (std::string dir, std::vector<std::string> &files);
-	bool isExtension(std::string str, std::string extension);
-	bool isSimpleType(std::string str);
-	bool isDCSimpleType(std::string str);
-	bool isStandardType(std::string str);
-	bool isEBUCoreType(std::string str);
-	int isUnbounded(std::string max);
-
-	bool elementExist(std::string str);
-	int findElement(std::string str);
-	bool groupExist(std::string str);
-	int findGroup(std::string str);
-	std::string removePrefix(std::string str, std::string prefix);
-	void extractSchema(std::string pathtofile);
-	std::vector<std::string > generateChild(std::string father, xercesc::DOMElement * el);
-	std::vector<std::string > generateChild(xercesc::DOMElement * el);
-	void copyChildren (std::string elementname);
-	void copyAttributes (std::string elementname);
-	void copyTypes (std::string elementname);
-	void copyOccurencies (std::string elementname);
-	void copyChildren (int position);
-	void copyAttributes (int position);
-	void copyTypes (int position);
-	void copyOccurencies (int position);
-
-	std::vector<std::string > copyLocalChildren (int position);
-	std::vector<std::string > copyLocalAttributes (int position);
-	std::vector<std::string > copyLocalTypes (int position);
-	std::vector<int> copyLocalOccurencies (int position);
-
 
 	struct AttributeStruct {
 		std::string name;
@@ -84,35 +55,35 @@ protected:
 		bool leaf;
 	};
 
-std::vector<ElementStruct> ebucoremodel;
+	std::vector<ElementStruct> ebucoremodel; // ebucore model 
+	std::vector<std::string> ebucoreStack;  //ebucore stack 
+
+	int getSchemas (std::string dir, std::vector<std::string> &files);
+	bool isExtension(std::string str, std::string extension);
+	bool isDCSimpleType(std::string str);
+	bool isStandardType(std::string str);
+	bool isEBUCoreType(std::string str);
+	int isUnbounded(std::string max);
+
+	bool groupExist(std::string str);
+	std::string removePrefix(std::string str, std::string prefix);
+	void extractSchema(std::string pathtofile);
 
 	AttributeStruct DCAttribute(void);
 	std::list<AttributeStruct> DCAttr;
 
 	std::string DCType(void);
-	std::vector<std::string > generateChildText(void);
 	AttributeStruct packAttribute(xercesc::DOMElement * el);
 	std::list<AttributeStruct> generateAttributes(std::string father, xercesc::DOMElement * el);
-	std::list<ElementStruct> generateChildren(std::string father, xercesc::DOMElement * el);
+	std::list<ElementStruct> generateChildren(std::string father, xercesc::DOMElement * el, int level);
+	void generateGroupChildren(std::list<ElementStruct> children, std::string father, xercesc::DOMElement * el);
 
-	std::string identifyType(xercesc::DOMElement * el);
 	std::vector<std::string> listEnumeration(xercesc::DOMElement * el);
 	ElementStruct constructSchema(xercesc::DOMElement * el);
-	ElementStruct newElement(xercesc::DOMElement * el);
-
-	void printElements(void);
-	void printChildren(int position);
-	void printAttributes(int position);
-
-	std::vector<xercesc::DOMElement *> schemasRef;
-	std::vector<std::string> name;
-	std::vector<std::string> group;
-	std::vector<std::vector<std::string > > child;
-	std::vector<std::vector<std::string > > attribute;
-	std::vector<std::vector<std::string > > type;
-	std::vector<std::vector<int> > occurency;
-
-int cpti;
+	void generateSkeletonElement(ElementStruct skeleton);
+	void generateSkeleton(void);
+std::ofstream out;
+	
 };
 
 #endif
