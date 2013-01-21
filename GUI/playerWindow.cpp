@@ -877,6 +877,8 @@ void playerWindow::on_quitMenu_activate()
 {
 
   hide();
+  std::string mxfmetadatatmpfile(Glib::get_current_dir ()+"/mxftmpmetadata.xml");
+  std::remove(mxfmetadatatmpfile.c_str());
 }
 
 void playerWindow::on_openPlaylistMenuItem_activate(void) {
