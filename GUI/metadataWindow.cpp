@@ -17,13 +17,16 @@ void metadataWindow::refGladeWidgets(const Glib::RefPtr<Gtk::Builder>& refGlade)
 	/* instantiate widgets for metadata window*/
 	refGlade->get_widget("expander1",Expander);
 	refGlade->get_widget("viewport1",viewport1);
+	refGlade->get_widget("FirstScrolledWindowBox",FirstScrolledWindowBox);
 	refGlade->get_widget("SecondScrolledWindowBox",SecondScrolledWindowBox);
+	refGlade->get_widget("boxEntries",boxEntries);
+	refGlade->get_widget("boxStatus",boxStatus);
 }
 
 void metadataWindow::refGladeButton(const Glib::RefPtr<Gtk::Builder>& refGlade) {
 	/* metadata control buttons */
 	refGlade->get_widget("importXML", importXML);	
-	refGlade->get_widget("exportXML", exportXML);	
+	refGlade->get_widget("exportXML", exportXML);
 	refGlade->get_widget("enableEdition", enableEdition);	
 	refGlade->get_widget("disableEdition", disableEdition);	
 	refGlade->get_widget("saveXML", saveXML);	
@@ -65,6 +68,7 @@ metadataWindow::metadataWindow(BaseObjectType* cobject,
 	refGladeWidgets(refGlade);// " " " " widgets
 	connectSignalClicked(); // clicked buttons
 	defineColors();
+	initRightSide();
 	set_has_resize_grip();
 	editionMode = false;
 	schema = new ebucoreParser();
@@ -73,6 +77,55 @@ metadataWindow::metadataWindow(BaseObjectType* cobject,
 // class destructor
 metadataWindow::~metadataWindow()
 {
+	// remove the previous temporary xml file to
+	// avoid to reload some previous metadata
+	std::remove((Glib::get_current_dir ()+"/mxftmpmetadata.xml").c_str());
+}
+void metadataWindow::initRightSide(void){
+	//boxStatus = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+ 	//boxStatus->show();
+	status = manage(new Gtk::Label("No EBUCore metadata detected"));
+ 	lineOne = manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL,0));
+ 	source = manage(new Gtk::Label("source : "));
+ 	sourceLabel = manage(new Gtk::Label("no source"));
+	lineTwo = manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL,0));
+ 	size = manage(new Gtk::Label("size : "));
+ 	sizeValue = manage(new Gtk::Label("0 byte"));
+	status->show();
+	source->show();
+	sourceLabel->show();
+	size->show();
+	sizeValue->show();
+	lineOne->show();
+	lineTwo->show();
+	lineOne->add(*source);
+	lineOne->add(*sourceLabel);
+	lineTwo->add(*size);
+	lineTwo->add(*sizeValue);
+	boxStatus->add(*status);
+	//boxStatus->show();
+	boxStatus->add(*lineOne);
+	boxStatus->add(*lineTwo);
+	//FirstScrolledWindowBox->hide();
+	boxEntries->hide();
+}
+
+void metadataWindow::setRightSide(void) {
+ 	if (getSize("mxftmpmetadata.xml") > 0) {
+		status->set_text("EBUCore metadata detected");
+ 	 	source->set_text("source : ");
+ 	 	sourceLabel->set_text(mxffilename);
+		size->set_text("size : ");
+		std::string path (Glib::get_current_dir ()+"/mxftmpmetadata.xml");
+		int test = getSize(path.c_str()) ;
+		std::string myvalue = intToString(test);
+ 	 	sizeValue->set_text(myvalue);
+ 		FirstScrolledWindowBox->show();
+ 		
+	} else {
+ 	 	status->set_text("No EBUCore metadata detected");
+		FirstScrolledWindowBox->hide();
+	}
 }
 
 void metadataWindow::setWindowsPosition(int x, int y) {
@@ -164,8 +217,8 @@ void metadataWindow::addNode(Glib::RefPtr<Gtk::ListStore> metadataStore) {
 	/*Gtk::Entry **/ tagValueEntry = manage(new Gtk::Entry());
 	tagValueEntry->set_placeholder_text("Input the tag's name'");
 	Gtk::RadioButton::Group radioGroup;
-  Gtk::RadioButton *page1hbox3radiobutton1 = manage(new Gtk::RadioButton(radioGroup, "text", true));
-  Gtk::RadioButton *page1hbox3radiobutton2 = manage(new Gtk::RadioButton(radioGroup, "node", false));
+	Gtk::RadioButton *page1hbox3radiobutton1 = manage(new Gtk::RadioButton(radioGroup, "text", true));
+	Gtk::RadioButton *page1hbox3radiobutton2 = manage(new Gtk::RadioButton(radioGroup, "node", false));
 	addNode_type=false;
 
 page1hbox3radiobutton1->signal_toggled().connect(sigc::bind<Gtk::Box *, Gtk::Box *>(sigc::mem_fun(*this, &metadataWindow::on_addNodeText_assistant),page2,page3));
@@ -962,6 +1015,7 @@ void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	viewport1minimumwidth = 0;
 	Expander->override_color(blue, Gtk::STATE_FLAG_NORMAL);
 	Expander->set_label(Glib::filename_display_basename(XMLfile.c_str()));
+	Expander->property_expanded().signal_changed().connect(sigc::bind<Gtk::Expander *>(sigc::mem_fun(*this, &metadataWindow::on_openExpander_changed), Expander));
 	viewport1minimumwidth = ((Glib::filename_display_basename(XMLfile.c_str())).size()*8 > viewport1minimumwidth)? (Glib::filename_display_basename(XMLfile.c_str())).size()*8 : viewport1minimumwidth;
 	Expander->set_margin_left(0);
 	// build the xml tree
@@ -989,6 +1043,7 @@ void metadataWindow::constructTreeView(Glib::ustring XMLfile) {
 	}
 	//write metadata buffer
 	writeMetadataBuffer(XMLfile.c_str());
+	setRightSide();
 }
 
 void metadataWindow::extractMetadata(std::string filename) {
@@ -1010,47 +1065,59 @@ void metadataWindow::extractMetadata(std::string filename) {
 	// extract the metadata from an mxf file
 	// and store it in a temporary xml file
 	// with the EBUSDK
+	int lastindex = filename.find_last_of("/");
+	// copy what comes after last dot
+	mxffilename = filename.substr (lastindex+1,filename.size()-(lastindex+1)); 
 	EBUSDK::EBUCore::ExtractEBUCoreMetadata(filename.c_str(), xmltmp.c_str(), &progress_cb);
 	// init xerces-s and then parse
 	// the temporary XML file
 	xercesc::XMLPlatformUtils::Initialize();
 	xercesc::DOMImplementation* dom_xml = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode(""));
 	xercesc::DOMLSParser* dom_file = dom_xml->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	
 	xercesc::DOMDocument* dom_doc  = dom_file->parseURI(xmltmp.c_str());
-	xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
-	// set font color of the label expander
-	viewport1minimumwidth = 0;	
-	Expander->override_color(blue, Gtk::STATE_FLAG_NORMAL);
-	Expander->set_label(Glib::filename_display_basename(filename.c_str()));
-	Expander->set_margin_left(0);
-	viewport1minimumwidth = ((Glib::filename_display_basename(filename.c_str())).size()*8 > viewport1minimumwidth)? (Glib::filename_display_basename(filename.c_str())).size()*8 : viewport1minimumwidth;
-	// build the XML tree
-	elReferences.clear();
-	previouslabel = false;
- 	boxEntries = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
-	cptnode = 0;
-//	delete xml_dom_root;
-	xml_dom_root=dom_root;
-	recursiveConstructTreeView(xml_dom_root, Expander,0,0);
-	//recursiveConstructEditableTreeView(dom_root, Expander2,0,boxEntries,xmlEntries);
-	boxEntries->show();
-	// add the new expander to the viewport
-	viewport1->add(*Expander);
-	viewport1->	set_size_request(viewport1minimumwidth,-1);
-	//viewport2->add(*boxEntries);
-	SecondScrolledWindowBox->add(*boxEntries);
-	// set the new size
-	set_size_request(viewport1minimumwidth+410,-1);
-	// grab the current window position
-	get_position(position_x,position_y);
-	// reset window size and position and then reload the window if required
-	if (get_visible()) {
-		reshow_with_initial_size();
-		move(position_x,position_y);
+	
+	std::cout<<"I'm here 4 and I'm "<<((dom_doc != 0)?"not empty":"empty")<<"."<<std::endl;
+	if (dom_doc != 0) {
+		xercesc::DOMElement*  dom_root = dom_doc->getDocumentElement();
+		std::cout<<"I'm here 5"<<std::endl;
+		// set font color of the label expander
+		viewport1minimumwidth = 0;	
+		Expander->override_color(blue, Gtk::STATE_FLAG_NORMAL);
+		Expander->set_label(Glib::filename_display_basename(filename.c_str()));
+		
+	Expander->property_expanded().signal_changed().connect(sigc::bind<Gtk::Expander *>(sigc::mem_fun(*this, &metadataWindow::on_openExpander_changed), Expander));
+		Expander->set_margin_left(0);
+		viewport1minimumwidth = ((Glib::filename_display_basename(filename.c_str())).size()*8 > viewport1minimumwidth)? (Glib::filename_display_basename(filename.c_str())).size()*8 : viewport1minimumwidth;
+		// build the XML tree
+		elReferences.clear();
+		previouslabel = false;
+	 	boxEntries = manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL,0));
+		cptnode = 0;
+		xml_dom_root=dom_root;
+
+		recursiveConstructTreeView(xml_dom_root, Expander,0,0);
+
+		boxEntries->show();
+		// add the new expander to the viewport
+		viewport1->add(*Expander);
+		viewport1->	set_size_request(viewport1minimumwidth,-1);
+		//viewport2->add(*boxEntries);
+		SecondScrolledWindowBox->add(*boxEntries);
+		// set the new size
+		set_size_request(viewport1minimumwidth+410,-1);
+		// grab the current window position
+		get_position(position_x,position_y);
+		// reset window size and position and then reload the window if required
+		if (get_visible()) {
+			reshow_with_initial_size();
+			move(position_x,position_y);
+		}
+		//metadataLoaded();
+		//write metadata buffer
+		writeMetadataBuffer(xmltmp.c_str());
 	}
-	metadataLoaded();
-	//write metadata buffer
-	writeMetadataBuffer(xmltmp.c_str());
+	setRightSide();
 }
 
 
@@ -1096,7 +1163,7 @@ void metadataWindow::on_importXML_clicked(void)
 			// if it is an XML file
 			if (isExtension(Glib::filename_display_basename(chooser.get_filename()), "xml")){
 				constructTreeView(chooser.get_filename());
-			metadataLoaded(); 
+			//metadataLoaded(); 
 			} else {
 				// if it is a file format error then
 				// display an error alert
@@ -1163,20 +1230,6 @@ std::string metadataWindow::removeTags(std::string str) {
 	return txt;
 }
 
-/*bool metadataWindow::on_extanderpressed_pressed(GdkEventButton* event, Gtk::Menu * Menu) {
-	// detect when mouse right button is pressed
-  if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) ) {
-		std::cout<<"right button pressed"<<std::endl;
-		// launch the popup menu
-		Menu->popup(event->button, event->time);
-		// signal has been handled.		
-    return true;
-  }
-	// signal hasn't been handled.	
-  return false;
-}*/
-
-
 bool metadataWindow::on_enter_label(GdkEventCrossing*, Gtk::EventBox *evLabel) {
 		// reset the event box background color
 		evLabel->unset_background_color(Gtk::STATE_FLAG_NORMAL);
@@ -1197,6 +1250,8 @@ bool metadataWindow::on_press_label(GdkEventButton* event, Gtk::EventBox *evLabe
 			previousnode->override_color(black, Gtk::STATE_FLAG_NORMAL);
 			previousnode->set_label("<b>"+removeTags(previousnode->get_label())+"</b>");
 			previouslabel = !previouslabel;
+			boxEntries->show();
+			boxStatus->hide();
 		} else if (previouslabel) {
 			previousnodelabel->override_color(black, Gtk::STATE_FLAG_NORMAL);
 		}
@@ -1204,6 +1259,12 @@ bool metadataWindow::on_press_label(GdkEventButton* event, Gtk::EventBox *evLabe
 		previousnodepos = atoi(evLabel->get_name().c_str());
 		previousnodelabel = txtLabel;
 		constructEditableNode(elReferences.at(previousnodepos));
+		
+		if (removeTags(previousnode->get_label()) == mxffilename) {
+			boxStatus->show();boxEntries->hide();
+		} else {
+			boxStatus->hide();boxEntries->show();
+		}
 		// signal has been handled.		
     return true;
   }
@@ -1236,4 +1297,33 @@ void metadataWindow::on_openExpander_changed(Gtk::Expander * exp) {
 	previousnode = exp;
 	previousnodepos = atoi(exp->get_name().c_str());
 	constructEditableNode(elReferences.at(previousnodepos));
+	if (removeTags(previousnode->get_label()) == mxffilename) {
+		boxStatus->show();boxEntries->hide();
+	} else {
+		boxStatus->hide();boxEntries->show();
+	}
+}
+
+unsigned long int metadataWindow::getSize(const char* file) {
+	FILE * pFile = fopen (file,"rb");
+	unsigned long int size = 0;
+
+	if (pFile!=NULL) {
+		fseek (pFile, 0, SEEK_END);   // non-portable
+		size = ftell (pFile);
+		fclose (pFile);
+  	}
+	return size;
+}
+
+
+std::string metadataWindow::intToString(unsigned long int number){
+	std::string Units[] = {"bytes","Kb","Mb","Gb", "Tb"};
+	short divider = 0;
+	for (double i=1.0;((float)(number))/i>1000.0;i*=1000.0) {
+		divider++;
+	}
+	std::stringstream converted;//create a stringstream
+	converted << ((float)(number))/pow(1000.0,divider);//add number to the stream
+	return converted.str()+" "+Units[divider];//return a string with the contents of the stream
 }

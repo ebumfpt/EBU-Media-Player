@@ -54,7 +54,7 @@
         // Unsupported platform
 //    #endif
 #elif __linux
-	#include </home/dossantos/App/EBUCoreProcessorLinux64/include/EBUCoreProcessor.h>
+	#include <EBUCoreProcessor.h>
     // linux
 //#elif __unix // all unices not caught above
     // Unix
@@ -442,13 +442,12 @@ void defineColors(void);
   Gtk::Button* XMLconformance; /*!< EBUcore conformance button */
 	Gtk::Viewport* viewport1; /*!< viewport1 the Gtk Viewport where is stored the expander */
 	Gtk::Expander * Expander; /*!< Expander the Gtk Expander is the EBUCore Metadata xml tree root */
-	Gtk::ScrolledWindow * FirstScrolledWindow; /*!< FirstScrolledWindow */
+	Gtk::ScrolledWindow * FirstScrolledWindowBox; /*!< FirstScrolledWindowBox */
 	Gtk::Box * SecondScrolledWindowBox;
 	
 	Gtk::Expander * previousnode; /*!< previousnode Pointer to store temporarly the current node selected */
 	Gtk::EventBox * previousnnodeevent; /*!< previousnode Pointer to store temporarly the current node selected */
 	Gtk::Label * previousnodelabel; /*!< previousnode Pointer to store temporarly the current node selected */
-	std::string * mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
 	//	xercesc::DOMDocument * metadata; /*!< metadata Pointer to xerces-c containing the XML metadata */
   
 	xercesc::DOMElement*  xml_dom_root;
@@ -456,7 +455,7 @@ void defineColors(void);
 	std::string xmlViewportFirst;
 	std::string xmlViewportSecond;
 
- 	Gtk::Box * boxEntries;
+ 	Gtk::Box * boxEntries, * boxStatus;
 	std::vector<xercesc::DOMElement *> elReferences;
  	Glib::RefPtr<Gtk::TextBuffer> metadataTextBuffer;
  	Glib::RefPtr<Gtk::TextBuffer> assistantTextBuffer;
@@ -487,6 +486,16 @@ void defineColors(void);
 
 	ebucoreParser * schema;
 
+	// right side window
+	void initRightSide(void);
+	void setRightSide(void);
+	unsigned long int getSize(const char* file);
+	std::string intToString(unsigned long int number);
+	Gtk::Label * status;
+ 	Gtk::Label * source, * sourceLabel;
+ 	Gtk::Label * size, * sizeValue;
+	Gtk::Box * lineOne, * lineTwo;
+	std::string mxffilename; /*!< mxffilename Pointer to store temporarly the current played node */
 };
 
 #endif

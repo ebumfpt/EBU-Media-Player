@@ -474,14 +474,17 @@ std::string ebucoreParser::removePrefix(std::string str, std::string prefix) {
 
 void ebucoreParser::generateSkeletonElement(ebucoreParser::ElementStruct skeleton) {
   //ebucoreStack.push_back(skeleton.name);
-	std::cout<<"name "<<skeleton.name<<std::endl;
-	ebucoreParser::ElementStruct child = skeleton.children.front();
-	for (int i=0;i<(int)skeleton.children.size();i++) {
-		std::cout<<"name "<<child.name<<std::endl;
+	//std::cout<<"generating an element..."<<std::endl;
+	//std::cout<<"name "<<skeleton.name<<std::endl;
+	for (std::list<ebucoreParser::ElementStruct>::iterator it=skeleton.children.begin() ; it != skeleton.children.end(); ++it) {
+		ebucoreParser::ElementStruct child = *it;
+		//std::cout<<"inside the loop"<<std::endl;
+		//std::cout<<"child name : "<<child.name<<" and it has a minimal cardinality of : "<<child.minCardinality<<std::endl;
+		if (child.minCardinality>0) {
+			//std::cout<<"go deeper..."<<std::endl;
+			generateSkeletonElement(child);
+		}
 	}	
-
-	<ebucoreParser::ElementStruct>::const_iterator cit = skeleton.children.begin();
-	std::cout<<"name : "<<cit.begin().name<<std::endl;	
 	//ebucoreStack.pop_back();
 }
 
